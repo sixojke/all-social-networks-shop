@@ -51,7 +51,6 @@ func Run() {
 	repo := repository.NewRepository(&repository.Deps{
 		Postgres: postgres,
 		Redis:    redis,
-		Config:   cfg,
 	})
 	services := service.NewService(&service.Deps{
 		Repo: repo,

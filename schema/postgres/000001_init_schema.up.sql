@@ -63,7 +63,7 @@ CREATE TABLE products(
     uploaded_at TIMESTAMP DEFAULT now(), 
 
     category_id INTEGER REFERENCES category(id),
-    filter_id INTEGER REFERENCES filters(id)
+    subcategory_id INTEGER REFERENCES subcategory(id)
 );
 
 CREATE TABLE orders(
