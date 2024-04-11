@@ -1,0 +1,22 @@
+version: '3.8'
+
+services: 
+  postgres_db:
+    image: postgres
+    container_name: name
+    restart: always
+    environment:
+      - POSTGRES_DB=
+      - POSTGRES_USER=
+      - POSTGRES_PASSWORD=
+    ports:
+      - "5436:5432"
+
+  app:
+    build: .
+    container_name: name
+    restart: always
+    ports:
+      - "8009:8009"
+    depends_on:
+      - postgres_db
