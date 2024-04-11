@@ -3,7 +3,7 @@ version: '3.8'
 services: 
   postgres_db:
     image: postgres
-    container_name: name
+    container_name: shop-postgres
     restart: always
     environment:
       - POSTGRES_DB=
@@ -14,7 +14,7 @@ services:
 
   app:
     build: .
-    container_name: name
+    container_name: shop-app
     restart: always
     ports:
       - "8009:8009"
