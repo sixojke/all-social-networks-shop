@@ -1,6 +1,9 @@
 package v1
 
 import (
+	"fmt"
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/sixojke/internal/service"
 )
@@ -20,4 +23,13 @@ func (h *Handler) Init(api *gin.RouterGroup) {
 	{
 		h.initProductsRoutes(v1)
 	}
+}
+
+func processIntParam(param string) (int, error) {
+	paramInt, err := strconv.Atoi(param)
+	if err != nil {
+		return 0, fmt.Errorf("error process int param: %v", err)
+	}
+
+	return paramInt, nil
 }

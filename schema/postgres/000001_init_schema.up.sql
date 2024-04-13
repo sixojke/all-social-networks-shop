@@ -4,15 +4,17 @@ CREATE TABLE users(
     password VARCHAR(256),
     email VARCHAR(255),
     balance NUMERIC(10, 2),
+    last_visit_at TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE suppliers(
     id SERIAL PRIMARY KEY,
+    total_profit NUMERIC(10, 2) NOT NULL,
     rating NUMERIC(1, 1) NOT NULL,
     total_reviews INTEGER NOT NULL,
     total_orders INTEGER NOT NULL, 
-    avg_order_fulfillment_time NOT NULL,
+    avg_order_fulfillment_time INTEGER NOT NULL,
 
     user_id BIGINT REFERENCES users(id)
 );

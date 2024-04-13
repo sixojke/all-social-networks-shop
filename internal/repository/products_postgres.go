@@ -31,3 +31,35 @@ func (r *ProductsPostgres) Create(product *domain.Product) (int, error) {
 
 	return id, nil
 }
+
+func (r *ProductsPostgres) GetById(id int) (*domain.Product, error) {
+	query := fmt.Sprintf(`
+  	SELECT *
+  	FROM %s
+  	WHERE id = $1`, products)
+
+	var product domain.Product
+	if err := r.db.Get(&product, query, id); err != nil {
+		return nil, fmt.Errorf("select product: %v", err)
+	}
+
+	return &product, nil
+}
+
+func (r *ProductsPostgres) GetBySubcategory(id int) (*[]domain.Product, error) {
+	query := fmt.Sprintf(`
+	SELECT *
+	FROM %s
+	WHERE subcategory_id = $1`, products)
+
+	var products []domain.Product
+	if err := r.db.Select(&products, query, id); err != nil {
+		return nil, fmt.Errorf("error select product: %v", err)
+	}
+
+	return &products, nil
+}
+
+// func (r *ProductsPostgres) Update(product *domain.Product) (*domain.Product, error) {
+
+// }

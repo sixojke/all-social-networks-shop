@@ -13,3 +13,15 @@ type Product struct {
 	CategoryId    int       `json:"category_id" db:"category_id"`
 	SubcategoryId int       `json:"subcategory_id" db:"subcategory_id"`
 }
+
+type Category struct {
+	Id   int    `json:"id" db:"id"`
+	Name string `json:"name" db:"name"`
+}
+
+type Subcategory struct {
+	Id         int    `json:"id" db:"id"`
+	Name       string `json:"name" db:"name"`
+	HoldTime   int    `json:"hold_time" db:"hold_time"`
+	CategoryId int    `json:"category_id" db:"category_id"`
+}

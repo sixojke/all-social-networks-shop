@@ -15,11 +15,38 @@ func NewProductsService(repo repository.Products) *ProductsService {
 	return &ProductsService{repo: repo}
 }
 
-func (r *ProductsService) Create(product *domain.Product) (int, error) {
-	id, err := r.repo.Create(product)
+func (s *ProductsService) Create(product *domain.Product) (int, error) {
+	id, err := s.repo.Create(product)
 	if err != nil {
-		return 0, fmt.Errorf("error product service: %v", err)
+		return 0, fmt.Errorf("error product service Create: %v", err)
 	}
 
 	return id, nil
 }
+
+func (s *ProductsService) GetById(id int) (*domain.Product, error) {
+	product, err := s.repo.GetById(id)
+	if err != nil {
+		return nil, fmt.Errorf("error product service GetById: %v", err)
+	}
+
+	return product, nil
+}
+
+func (s *ProductsService) GetBySubcategoryId(id int) (*[]domain.Product, error) {
+	products, err := s.repo.GetBySubcategory(id)
+	if err != nil {
+		return nil, fmt.Errorf("error product service GetBySubcategoryId")
+	}
+
+	return products, nil
+}
+
+// func (s *ProductsService) Update(product *domain.Product) (*domain.Product, error) {
+// 	product, err := s.repo.Update(product)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("error product service Update: %v", err)
+// 	}
+
+// 	return product, nil
+// }

@@ -8,6 +8,9 @@ import (
 
 type Products interface {
 	Create(product *domain.Product) (int, error)
+	GetById(id int) (*domain.Product, error)
+	GetBySubcategory(id int) (*[]domain.Product, error)
+	// Update(product *domain.Product) (*domain.Product, error)
 }
 
 type Deps struct {
