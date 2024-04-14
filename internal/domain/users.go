@@ -3,13 +3,19 @@ package domain
 import "time"
 
 type User struct {
-	Id          int       `json:"id" db:"id"`
-	Username    string    `json:"username" db:"username"`
-	Password    string    `db:"password"`
-	Email       string    `json:"email" db:"email"`
-	Balance     float64   `json:"balance" db:"balance"`
-	LastVisitAt time.Time `json:"last_visit_at" db:"last_visit_at"`
-	CreatedAt   time.Time `json:"created_at"`
+	Id           int       `json:"id" db:"id"`
+	Username     string    `json:"username" db:"username"`
+	Password     string    `db:"password"`
+	Email        string    `json:"email" db:"email"`
+	Balance      float64   `json:"balance" db:"balance"`
+	LastVisitAt  time.Time `json:"last_visit_at" db:"last_visit_at"`
+	RegisteredAt time.Time `json:"registered_at"`
+}
+
+type Session struct {
+	RefreshToken string    `json:"refresh_token" db:"refresh_token"`
+	ExpiresAt    time.Time `json:"expires_at" db:"expires_at"`
+	UserId       int       `json:"user_id" db:"user_id"`
 }
 
 type Supplier struct {

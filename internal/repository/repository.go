@@ -6,6 +6,14 @@ import (
 	"github.com/sixojke/internal/domain"
 )
 
+type Users interface {
+	Create(user *domain.User) (int, error)
+	GetByCredentials(username, password string) (*domain.User, error)
+	GetByRefreshToken(refreshToken string) (*domain.User, error)
+	Verify(userId int, code string) error
+	SetSession(session *domain.Session) error
+}
+
 type Products interface {
 	Create(product *domain.Product) (int, error)
 	GetById(id int) (*domain.Product, error)
@@ -19,6 +27,7 @@ type Deps struct {
 }
 
 type Repository struct {
+	Users    Users
 	Products Products
 }
 

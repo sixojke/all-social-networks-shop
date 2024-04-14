@@ -22,3 +22,11 @@ http_server:
 
 cache: 
   expiration: 60s
+
+service:
+  users:
+    auth:
+      verification_code_length: 6
+      jwt:
+        access_token_ttl: 15m
+        refresh_token_ttl: 14400m

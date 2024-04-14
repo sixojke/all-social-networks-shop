@@ -5,8 +5,22 @@ CREATE TABLE users(
     email VARCHAR(255),
     balance NUMERIC(10, 2),
     last_visit_at TIMESTAMP NOT NULL,
-    created_at TIMESTAMP DEFAULT now()
+    registered_at TIMESTAMP DEFAULT now()
 );
+
+CREATE TABLE verification(
+    verified bool DEFAULT false,
+    code VARCHAR(10),
+
+    user_id BIGINT REFERENCES users(id)
+)
+
+CREATE TABLE sessions(
+    refresh_token VARCHAR(128) NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    
+    user_id BIGINT REFERENCES users(id)
+)
 
 CREATE TABLE suppliers(
     id SERIAL PRIMARY KEY,

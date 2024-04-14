@@ -1,9 +1,37 @@
 package service
 
 import (
+	"github.com/sixojke/internal/config"
 	"github.com/sixojke/internal/domain"
 	"github.com/sixojke/internal/repository"
+	"github.com/sixojke/pkg/auth"
+	email "github.com/sixojke/pkg/email/smpt"
+	"github.com/sixojke/pkg/hash"
+	"github.com/sixojke/pkg/otp"
 )
+
+type UserSignUnInp struct {
+	Username string
+	Password string
+	Email    string
+}
+
+type UserSignInInp struct {
+	Username string
+	Password string
+}
+
+type Tokens struct {
+	AccessToken  string
+	RefreshToken string
+}
+
+type Users interface {
+	SignUp(inp UserSignUnInp) (id int, err error)
+	SignIn(inp UserSignInInp) (Tokens, error)
+	RefreshTokens(refreshToken string) (Tokens, error)
+	Verify(userId int, code string) error
+}
 
 type Products interface {
 	Create(product *domain.Product) (int, error)
@@ -13,15 +41,24 @@ type Products interface {
 }
 
 type Deps struct {
-	Repo *repository.Repository
+	Repo         *repository.Repository
+	Config       *config.Service
+	Hasher       hash.PasswordHasher
+	OtpGenerator otp.Generator
+	EmailSender  *email.SMTPSender
+	TokenManager auth.TokenManager
 }
 
 type Service struct {
+	Users    Users
 	Products Products
 }
 
 func NewService(deps *Deps) *Service {
+	emailService := NewEmailService(deps.EmailSender)
+
 	return &Service{
+		Users:    NewUsersService(deps.Repo.Users, deps.Config.Users, deps.TokenManager, deps.Hasher, deps.OtpGenerator, emailService),
 		Products: NewProductsService(deps.Repo.Products),
 	}
 }

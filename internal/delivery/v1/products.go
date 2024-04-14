@@ -21,12 +21,12 @@ func (h *Handler) initProductsRoutes(api *gin.RouterGroup) {
 }
 
 type createProductInp struct {
-	Name          string  `json:"name" db:"name"`
-	Price         float64 `json:"price" db:"price"`
-	Quantity      int     `json:"quantity" db:"quantity"`
-	Description   string  `json:"description" db:"description"`
-	CategoryId    int     `json:"category_id" db:"category_id"`
-	SubcategoryId int     `json:"subcategory_id" db:"subcategory_id"`
+	Name          string  `json:"name"`
+	Price         float64 `json:"price"`
+	Quantity      int     `json:"quantity"`
+	Description   string  `json:"description"`
+	CategoryId    int     `json:"category_id"`
+	SubcategoryId int     `json:"subcategory_id"`
 }
 
 func (h *Handler) createProduct(c *gin.Context) {

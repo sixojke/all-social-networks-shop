@@ -1,92 +1,123 @@
 package service
 
 import (
+	"strconv"
+	"time"
+
+	"github.com/sixojke/internal/config"
+	"github.com/sixojke/internal/domain"
+	"github.com/sixojke/internal/repository"
+	"github.com/sixojke/pkg/auth"
 	"github.com/sixojke/pkg/hash"
 	"github.com/sixojke/pkg/otp"
 )
 
 type UsersService struct {
+	repo         repository.Users
+	config       config.UsersService
+	tokenManager auth.TokenManager
 	hasher       hash.PasswordHasher
 	otpGenerator otp.Generator
+	email        *emailSerive
 }
 
-func NewUsersService(hasher hash.PasswordHasher) *UsersService {
+func NewUsersService(repo repository.Users, config config.UsersService, tokenManager auth.TokenManager, hasher hash.PasswordHasher,
+	otpGenerator otp.Generator, email *emailSerive) *UsersService {
 	return &UsersService{
-		hasher: hasher,
+		repo:         repo,
+		config:       config,
+		hasher:       hasher,
+		otpGenerator: otpGenerator,
+		email:        email,
 	}
 }
 
-// func (s *UsersService) SignUp(ctx context.Context, input UserSignUpInput) error {
-// 	passwordHash, err := s.hasher.Hash(input.Password)
-// 	if err != nil {
-// 		return err
-// 	}
+func (s *UsersService) SignUp(inp UserSignUnInp) (id int, err error) {
+	passwordHash, err := s.hasher.Hash(inp.Password)
+	if err != nil {
+		return 0, err
+	}
 
-// 	verificationCode := s.otpGenerator.RandomSecret(s.verificationCodeLength)
+	verificationCode := s.otpGenerator.RandomSecret(s.config.VerificationCodeLength)
 
-// 	user := domain.User{
-// 		Name:         input.Name,
-// 		Password:     passwordHash,
-// 		Phone:        input.Phone,
-// 		Email:        input.Email,
-// 		RegisteredAt: time.Now(),
-// 		LastVisitAt:  time.Now(),
-// 		Verification: domain.Verification{
-// 			Code: verificationCode,
-// 		},
-// 	}
+	id, err = s.repo.Create(&domain.User{
+		Username:    inp.Username,
+		Password:    passwordHash,
+		Email:       inp.Email,
+		Balance:     0,
+		LastVisitAt: time.Now(),
+	})
+	if err != nil {
+		return 0, err
+	}
 
-// 	if err := s.repo.Create(ctx, user); err != nil {
-// 		if errors.Is(err, domain.ErrUserAlreadyExists) {
-// 			return err
-// 		}
+	if err := s.email.SendUserVerificationEmail(&VerificationEmailInp{
+		Email:            inp.Email,
+		VerificationCode: verificationCode,
+	}); err != nil {
+		return 0, err
+	}
 
-// 		return err
-// 	}
+	return id, nil
+}
 
-// 	return s.emailService.SendUserVerificationEmail(VerificationEmailInput{
-// 		Email:            user.Email,
-// 		Name:             user.Name,
-// 		VerificationCode: verificationCode,
-// 	})
-// }
+func (s *UsersService) SignIn(inp UserSignInInp) (Tokens, error) {
+	passwordHash, err := s.hasher.Hash(inp.Password)
+	if err != nil {
+		return Tokens{}, err
+	}
 
-// func (s *UsersService) SignIn(ctx context.Context, input UserSignInInput) (Tokens, error) {
-// 	passwordHash, err := s.hasher.Hash(input.Password)
-// 	if err != nil {
-// 		return Tokens{}, err
-// 	}
+	user, err := s.repo.GetByCredentials(inp.Username, passwordHash)
+	if err != nil {
+		return Tokens{}, err
+	}
 
-// 	user, err := s.repo.GetByCredentials(ctx, input.Email, passwordHash)
-// 	if err != nil {
-// 		if errors.Is(err, domain.ErrUserNotFound) {
-// 			return Tokens{}, err
-// 		}
+	return s.createSession(user.Id)
+}
 
-// 		return Tokens{}, err
-// 	}
+func (s *UsersService) RefreshTokens(refreshToken string) (Tokens, error) {
+	user, err := s.repo.GetByRefreshToken(refreshToken)
+	if err != nil {
+		return Tokens{}, err
+	}
 
-// 	return s.createSession(ctx, user.ID)
-// }
+	return s.createSession(user.Id)
+}
 
-// func (s *UsersService) RefreshTokens(ctx context.Context, refreshToken string) (Tokens, error) {
-// 	student, err := s.repo.GetByRefreshToken(ctx, refreshToken)
-// 	if err != nil {
-// 		return Tokens{}, err
-// 	}
+func (s *UsersService) Verify(userId int, code string) error {
+	err := s.repo.Verify(userId, code)
+	if err != nil {
+		return err
+	}
 
-// 	return s.createSession(ctx, student.ID)
-// }
+	return nil
+}
 
-// func (s *UsersService) Verify(ctx context.Context, userID primitive.ObjectID, hash string) error {
-// 	err := s.repo.Verify(ctx, userID, hash)
-// 	if err != nil {
-// 		if errors.Is(err, domain.ErrVerificationCodeInvalid) {
-// 			return err
-// 		}
+func (s *UsersService) createSession(userId int) (Tokens, error) {
+	var (
+		tokens Tokens
+		err    error
+	)
 
-// 		return err
-// 	}
+	tokens.AccessToken, err = s.tokenManager.NewJWT(strconv.Itoa(userId), s.config.JWT.AccessTokenTTL)
+	if err != nil {
+		return tokens, err
+	}
 
-// 	return nil
-// }
+	tokens.RefreshToken, err = s.tokenManager.NewRefreshToken()
+	if err != nil {
+		return tokens, err
+	}
+
+	session := domain.Session{
+		RefreshToken: tokens.RefreshToken,
+		ExpiresAt:    time.Now().Add(s.config.JWT.RefreshTokenTTL),
+		UserId:       userId,
+	}
+
+	if err := s.repo.SetSession(&session); err != nil {
+		return Tokens{}, err
+	}
+
+	return tokens, nil
+}

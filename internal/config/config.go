@@ -21,6 +21,7 @@ type Config struct {
 	Cache         Cache
 	HTTPServer    HTTPServer
 	HandlerConfig Handler
+	Service       Service
 }
 
 type Postgres struct {
@@ -52,6 +53,24 @@ type HTTPServer struct {
 
 type Handler struct{}
 
+type Service struct {
+	Users UsersService `mapstructure:"users"`
+}
+
+type UsersService struct {
+	Auth `mapstructure:"auth"`
+}
+type Auth struct {
+	JWT                    JWT `mapstructure:"jwt"`
+	VerificationCodeLength int `mapstructure:"verification_code_length"`
+	SigningKey             string
+}
+
+type JWT struct {
+	AccessTokenTTL  time.Duration `mapstructure:"access_token_ttl"`
+	RefreshTokenTTL time.Duration `mapstructure:"refresh_token_ttl"`
+}
+
 func InitConfig() (*Config, error) {
 	if err := read(); err != nil {
 		return nil, err
@@ -82,6 +101,11 @@ func unmarshal(cfg *Config) error {
 		return fmt.Errorf("unmarshal http server config: %v", err)
 	}
 
+	if err := viper.UnmarshalKey("service", &cfg.Service); err != nil {
+		return fmt.Errorf("unmarshal http server config: %v", err)
+	}
+
+	cfg.Service.Users.Auth.SigningKey = os.Getenv("SIGNING_KEY")
 	cfg.Postgres.Username = os.Getenv("POSTGRES_USER")
 	cfg.Postgres.Password = os.Getenv("POSTGRES_PASSWORD")
 
