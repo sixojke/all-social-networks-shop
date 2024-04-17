@@ -10,12 +10,16 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/go-redis/redis"
 	"github.com/jmoiron/sqlx"
 	log "github.com/sirupsen/logrus"
 	"github.com/sixojke/internal/server"
+	"github.com/sixojke/pkg/auth"
 	"github.com/sixojke/pkg/database"
+	email "github.com/sixojke/pkg/email/smpt"
+	"github.com/sixojke/pkg/hash"
 	"github.com/sixojke/pkg/migrations"
+	"github.com/sixojke/pkg/otp"
+	"github.com/sixojke/pkg/payments/payok"
 
 	"github.com/sixojke/internal/config"
 	"github.com/sixojke/internal/delivery"
@@ -27,6 +31,28 @@ func Run() {
 	cfg, err := config.InitConfig()
 	if err != nil {
 		log.Fatal(fmt.Sprintf("config error: %v", err))
+	}
+
+	payokClient := payok.NewClient(cfg.Payok.ShopId, cfg.Payok.SuccessUrl, cfg.Payok.SecretKey)
+	fmt.Println(payokClient.GetLink(&payok.Payment{
+		PaymentId:   "342345",
+		Amount:      12343,
+		Description: "tes3t",
+		Currency:    "RUB",
+	}))
+
+	hasher := hash.NewSHA1Hasher("my-salt")
+
+	otpGenerator := otp.NewGOTPGenerator()
+
+	emaildSender, err := email.NewSMTPSender(cfg.EmailSender.From, cfg.EmailSender.Password, cfg.Postgres.Host, cfg.EmailSender.Port)
+	if err != nil {
+		log.Fatal(fmt.Errorf("email sender: %v", err))
+	}
+
+	tokenManager, err := auth.NewManager(cfg.Service.Users.Auth.SigningKey)
+	if err != nil {
+		log.Fatal(fmt.Errorf("token manager: %v", err))
 	}
 
 	postgres, err := database.NewPostgresDB(cfg.Postgres)
@@ -41,21 +67,19 @@ func Run() {
 	}
 	log.Info("[POSTGRES] Migrate successful")
 
-	redis, err := database.NewRedisDB(cfg.Redis)
-	if err != nil {
-		log.Fatal(fmt.Sprintf("redis connection error: %v", err))
-	}
-	defer redis.Close()
-	log.Info("[REDIS] Connection successful")
-
 	repo := repository.NewRepository(&repository.Deps{
 		Postgres: postgres,
-		Redis:    redis,
 	})
 	services := service.NewService(&service.Deps{
-		Repo: repo,
+		Repo:         repo,
+		Config:       &cfg.Service,
+		Hasher:       hasher,
+		OtpGenerator: otpGenerator,
+		EmailSender:  emaildSender,
+		TokenManager: tokenManager,
+		PayokClient:  payokClient,
 	})
-	handler := delivery.NewHandler(services)
+	handler := delivery.NewHandler(cfg.HandlerConfig, services, tokenManager)
 
 	srv := server.NewServer(cfg.HTTPServer, handler.Init())
 	go func() {
@@ -65,10 +89,10 @@ func Run() {
 	}()
 	log.Info(fmt.Sprintf("[SERVER] Started :%v", cfg.HTTPServer.Port))
 
-	shutdown(srv, services, postgres, redis)
+	shutdown(srv, postgres)
 }
 
-func shutdown(srv *server.Server, services *service.Service, postgres *sqlx.DB, redis *redis.Client) {
+func shutdown(srv *server.Server, postgres *sqlx.DB) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 
@@ -84,6 +108,4 @@ func shutdown(srv *server.Server, services *service.Service, postgres *sqlx.DB, 
 	}
 
 	postgres.Close()
-	redis.Close()
-
 }
