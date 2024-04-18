@@ -1,5 +1,5 @@
 run:
-	sudo docker-compose up -d
+	sudo docker-compose up --build -d
 
 swag:
 	swag init -g internal/app/app.go
