@@ -4,8 +4,8 @@ click_house:
   db_name: "test_db"
 
 postgres:
-  host: "localhost"
-  port: 5436
+  host: "postgres_db"
+  port: 5432
   db_name: "all_social_networks_shop"
   ssl_mode: "disable"
 

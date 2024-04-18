@@ -18,3 +18,11 @@ services:
       - "8009:8009"
     depends_on:
       - postgres_db
+
+  nginx:
+       image: nginx
+       container_name: nginx
+       ports:
+         - "8010:80"
+       volumes:
+         - ./nginx.conf:/etc/nginx/nginx.conf:ro
