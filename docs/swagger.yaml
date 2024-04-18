@@ -10,6 +10,12 @@ definitions:
     - code
     - id
     type: object
+  v1.dataResponse:
+    properties:
+      count:
+        type: integer
+      data: {}
+    type: object
   v1.refreshTokenInp:
     properties:
       refresh_token:
@@ -68,6 +74,50 @@ info:
   title: All social networks shop API
   version: "1.0"
 paths:
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: get all products
+      parameters:
+      - default: 10
+        description: Number of items per page
+        in: query
+        maximum: 100
+        minimum: 0
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: User Verify Registration
+      tags:
+      - products
   /users/auth/refresh:
     post:
       consumes:
@@ -127,6 +177,10 @@ paths:
             $ref: '#/definitions/v1.tokenResponse'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "403":
+          description: Forbidden
           schema:
             $ref: '#/definitions/v1.response'
         "404":

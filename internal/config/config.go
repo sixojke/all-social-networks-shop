@@ -61,6 +61,12 @@ type HTTPServer struct {
 }
 
 type Handler struct {
+	Pagination Pagination
+}
+
+type Pagination struct {
+	DefaultLimit int `mapstructure:"default_limit"`
+	MaxLimit     int `mapstructure:"max_limit"`
 }
 
 type Service struct {

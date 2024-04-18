@@ -42,4 +42,7 @@ service:
         refresh_token_ttl: 14400m
 
 handler:
+  pagination:
+    default_limit: 10
+    max_limit: 100
   
