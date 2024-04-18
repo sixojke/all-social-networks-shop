@@ -40,6 +40,8 @@ type Products interface {
 	// GetById(id int) (*domain.Product, error)
 	// GetBySubcategoryId(id int) (*[]domain.Product, error)
 	// Update(product *domain.Product) (*domain.Product, error)
+	GetCategories() (*[]domain.Category, error)
+	GetSubcategories(categoryId int) (*[]domain.Subcategory, error)
 }
 
 type Deps struct {
