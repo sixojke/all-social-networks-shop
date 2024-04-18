@@ -62,9 +62,9 @@ func (h *Handler) initProductsRoutes(api *gin.RouterGroup) {
 // @ModuleID allProducts
 // @Accept  json
 // @Produce  json
-// @Param limit query int false "Number of items per page" default(10)
+// @Param limit query int false "Number of items per page" default(10) maximum(100)
 // @Param offset query int false "Offset for pagination" default(0)
-// @Success 200 {object} dataResponse
+// @Success 200 {object} paginationResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
@@ -97,9 +97,8 @@ func (h *Handler) productsGetAll(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, dataResponse{
-		Data:  products,
-		Count: int64(len(*products)),
+	c.JSON(http.StatusOK, paginationResponse{
+		Pagination: products,
 	})
 }
 

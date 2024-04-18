@@ -24,7 +24,7 @@ func NewProductsService(repo repository.Products) *ProductsService {
 // 	return id, nil
 // }
 
-func (s *ProductsService) GetAll(limit, offset int) (*[]domain.Product, error) {
+func (s *ProductsService) GetAll(limit, offset int) (*domain.Pagination, error) {
 	products, err := s.repo.GetAll(limit, offset)
 	if err != nil {
 		return nil, fmt.Errorf("error product service GetAll: %v", err)

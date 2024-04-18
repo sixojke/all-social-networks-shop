@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	"github.com/sixojke/internal/domain"
 )
 
 type tokenResponse struct {
@@ -21,6 +22,10 @@ type idResponse struct {
 
 type response struct {
 	Message string `json:"message"`
+}
+
+type paginationResponse struct {
+	Pagination *domain.Pagination
 }
 
 func newResponse(c *gin.Context, statusCode int, message string) {

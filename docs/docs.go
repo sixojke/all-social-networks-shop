@@ -31,7 +31,6 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "maximum": 100,
-                        "minimum": 0,
                         "type": "integer",
                         "default": 10,
                         "description": "Number of items per page",
@@ -50,7 +49,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/v1.dataResponse"
+                            "$ref": "#/definitions/v1.paginationResponse"
                         }
                     },
                     "400": {
@@ -331,6 +330,21 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "domain.Pagination": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "limit": {
+                    "type": "integer"
+                },
+                "offset": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
         "v1.UserVerifyInp": {
             "type": "object",
             "required": [
@@ -346,13 +360,12 @@ const docTemplate = `{
                 }
             }
         },
-        "v1.dataResponse": {
+        "v1.paginationResponse": {
             "type": "object",
             "properties": {
-                "count": {
-                    "type": "integer"
-                },
-                "data": {}
+                "pagination": {
+                    "$ref": "#/definitions/domain.Pagination"
+                }
             }
         },
         "v1.refreshTokenInp": {

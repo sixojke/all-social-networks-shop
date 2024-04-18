@@ -35,7 +35,7 @@ func NewProductsPostgres(db *sqlx.DB) *ProductsPostgres {
 // 	return id, nil
 // }
 
-func (r *ProductsPostgres) GetAll(limit, offset int) (*[]domain.Product, error) {
+func (r *ProductsPostgres) GetAll(limit, offset int) (*domain.Pagination, error) {
 	query := fmt.Sprintf(`
 	SELECT 
 		products.id, products.name, products.description, products.price, products.quantity, 
@@ -45,8 +45,8 @@ func (r *ProductsPostgres) GetAll(limit, offset int) (*[]domain.Product, error) 
 	ORDER BY products.quantity_sales
 	LIMIT $1 OFFSET $2`, products, category)
 
-	var products []domain.Product
-	if err := r.db.Select(&products, query, limit, offset); err != nil {
+	var p []domain.Product
+	if err := r.db.Select(&p, query, limit, offset); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, domain.ErrProductsNotFound
 		}
@@ -54,7 +54,21 @@ func (r *ProductsPostgres) GetAll(limit, offset int) (*[]domain.Product, error) 
 		return nil, fmt.Errorf("get all products: %v", err)
 	}
 
-	return &products, nil
+	query = fmt.Sprintf(`
+	SELECT COUNT(*)
+	FROM %s`, products)
+
+	var rows int
+	if err := r.db.QueryRow(query).Scan(&rows); err != nil {
+		return nil, fmt.Errorf("error select count rows: %v", err)
+	}
+
+	return &domain.Pagination{
+		Data:   p,
+		Total:  rows,
+		Limit:  limit,
+		Offset: offset,
+	}, nil
 }
 
 // func (r *ProductsPostgres) GetById(id int) (*domain.Product, error) {
