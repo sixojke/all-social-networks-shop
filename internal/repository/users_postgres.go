@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/jmoiron/sqlx"
@@ -20,7 +21,7 @@ func NewUsersPostgres(db *sqlx.DB) *UsersPostgres {
 	}
 }
 
-func (r *UsersPostgres) Create(user *domain.User) (int, error) {
+func (r *UsersPostgres) Create(user *domain.User, code string) (int, error) {
 	tx, err := r.db.Begin()
 	if err != nil {
 		return 0, fmt.Errorf("error create tx: %v", err)
@@ -30,11 +31,18 @@ func (r *UsersPostgres) Create(user *domain.User) (int, error) {
 	INSERT INTO %s 
 		(username, password, email, balance, last_visit_at)
 	VALUES
-		(:username, :password, :email, :balance, :last_visit_at)`, users)
+		($1, $2, $3, $4, $5)
+	RETURNING id`, users)
 
 	var id int
-	if err := tx.QueryRow(query, user).Scan(&id); err != nil {
+	if err := tx.QueryRow(query, user.Username, user.Password, user.Email,
+		user.Balance, user.LastVisitAt).Scan(&id); err != nil {
 		tx.Rollback()
+
+		if strings.Contains(err.Error(), "duplicate key value") {
+			return 0, domain.ErrDuplicateKey
+		}
+
 		return 0, fmt.Errorf("error insert user: %v", err)
 	}
 
@@ -51,12 +59,12 @@ func (r *UsersPostgres) Create(user *domain.User) (int, error) {
 
 	query = fmt.Sprintf(`
 	INSERT INTO %s
-		(user_id)
+		(user_id, code)
 	VALUES
-		($1)`, verification)
-	if _, err := tx.Exec(query, id); err != nil {
+		($1, $2)`, verification)
+	if _, err := tx.Exec(query, id, code); err != nil {
 		tx.Rollback()
-		return 0, fmt.Errorf("error insert base user session: %v", err)
+		return 0, fmt.Errorf("error insert base verification: %v", err)
 	}
 
 	if err := tx.Commit(); err != nil {
@@ -68,7 +76,6 @@ func (r *UsersPostgres) Create(user *domain.User) (int, error) {
 }
 
 func (r *UsersPostgres) GetByCredentials(username, password string) (*domain.User, error) {
-	fmt.Println(username, password)
 	query := fmt.Sprintf(`
 	SELECT 
 		id, username, email, balance
@@ -84,35 +91,49 @@ func (r *UsersPostgres) GetByCredentials(username, password string) (*domain.Use
 		return nil, fmt.Errorf("error get user by credentials: %v", err)
 	}
 
+	query = fmt.Sprintf(`
+	SELECT verified 
+	FROM %s
+	WHERE user_id = $1`, verification)
+
+	var verified bool
+	if err := r.db.Get(&verified, query, user.Id); err != nil {
+		return nil, fmt.Errorf("error get user verified: %v", err)
+	}
+
+	if !verified {
+		return nil, domain.ErrUserNotVerified
+	}
+
 	return &user, nil
 }
 
-func (r *UsersPostgres) GetByRefreshToken(refreshToken string) (*domain.User, error) {
+func (r *UsersPostgres) GetByRefreshToken(refreshToken string) (*domain.Session, error) {
 	query := fmt.Sprintf(`
 	SELECT
 		user_id
 	FROM %s
 	WHERE refresh_token = $1 AND expires_at > NOW()`, sessions)
 
-	var user domain.User
-	if err := r.db.Get(&user, query, refreshToken); err != nil {
+	var session domain.Session
+	if err := r.db.Get(&session, query, refreshToken); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, domain.ErrUserNotFound
 		}
 
-		return nil, err
+		return nil, fmt.Errorf("error get user by refresh token: %v", err)
 	}
 
-	return &user, nil
+	return &session, nil
 }
 
 func (r *UsersPostgres) Verify(userId int, code string) error {
 	query := fmt.Sprintf(`
 	UPDATE %s
-	SET code = $1 AND SET verified = true
-	WHERE user_id = $2`, sessions)
+	SET code = '', verified = true
+	WHERE user_id = $1 AND code = $2`, verification)
 
-	result, err := r.db.Exec(query, code, userId)
+	result, err := r.db.Exec(query, userId, code)
 	if err != nil {
 		return fmt.Errorf("error update session: %v", err)
 	}

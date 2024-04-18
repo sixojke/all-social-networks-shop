@@ -7,17 +7,18 @@ import (
 )
 
 type Users interface {
-	Create(user *domain.User) (int, error)
+	Create(user *domain.User, code string) (int, error)
 	GetByCredentials(username, password string) (*domain.User, error)
-	GetByRefreshToken(refreshToken string) (*domain.User, error)
+	GetByRefreshToken(refreshToken string) (*domain.Session, error)
 	Verify(userId int, code string) error
 	SetSession(session *domain.Session) error
 }
 
 type Products interface {
-	Create(product *domain.Product) (int, error)
-	GetById(id int) (*domain.Product, error)
-	GetBySubcategory(id int) (*[]domain.Product, error)
+	// Create(product *domain.Product) (int, error)
+	GetAll(limit, offset int) (*domain.Pagination, error)
+	// GetById(id int) (*domain.Product, error)
+	// GetBySubcategory(id int) (*[]domain.Product, error)
 	// Update(product *domain.Product) (*domain.Product, error)
 }
 

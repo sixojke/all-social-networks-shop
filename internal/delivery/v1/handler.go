@@ -5,17 +5,20 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sixojke/internal/config"
 	"github.com/sixojke/internal/service"
 	"github.com/sixojke/pkg/auth"
 )
 
 type Handler struct {
+	config       config.Handler
 	services     *service.Service
 	tokenManager auth.TokenManager
 }
 
-func NewHandler(services *service.Service, tokenManager auth.TokenManager) *Handler {
+func NewHandler(config config.Handler, services *service.Service, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
+		config:       config,
 		services:     services,
 		tokenManager: tokenManager,
 	}

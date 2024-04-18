@@ -39,7 +39,10 @@ func (s *UsersService) SignUp(inp UserSignUnInp) (id int, err error) {
 		return 0, err
 	}
 
-	verificationCode := s.otpGenerator.RandomSecret(s.config.Auth.VerificationCodeLength)
+	verificationCode, err := s.otpGenerator.RandomSecret()
+	if err != nil {
+		return 0, err
+	}
 
 	id, err = s.repo.Create(&domain.User{
 		Username:    inp.Username,
@@ -47,7 +50,7 @@ func (s *UsersService) SignUp(inp UserSignUnInp) (id int, err error) {
 		Email:       inp.Email,
 		Balance:     0,
 		LastVisitAt: time.Now(),
-	})
+	}, verificationCode)
 	if err != nil {
 		return 0, err
 	}
@@ -77,12 +80,12 @@ func (s *UsersService) SignIn(inp UserSignInInp) (Tokens, error) {
 }
 
 func (s *UsersService) RefreshTokens(refreshToken string) (Tokens, error) {
-	user, err := s.repo.GetByRefreshToken(refreshToken)
+	session, err := s.repo.GetByRefreshToken(refreshToken)
 	if err != nil {
 		return Tokens{}, err
 	}
 
-	return s.createSession(user.Id)
+	return s.createSession(session.UserId)
 }
 
 func (s *UsersService) Verify(userId int, code string) error {

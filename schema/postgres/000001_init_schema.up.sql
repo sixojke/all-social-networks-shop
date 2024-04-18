@@ -1,8 +1,8 @@
 CREATE TABLE users(
     id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(32),
+    username VARCHAR(32) UNIQUE,
     password VARCHAR(256),
-    email VARCHAR(255),
+    email VARCHAR(255) UNIQUE,
     balance NUMERIC(10, 2),
     last_visit_at TIMESTAMP NOT NULL,
     registered_at TIMESTAMP DEFAULT now()
@@ -10,13 +10,13 @@ CREATE TABLE users(
 
 CREATE TABLE verification(
     verified bool DEFAULT false,
-    code VARCHAR(10),
+    code VARCHAR(32),
 
     user_id BIGINT REFERENCES users(id)
 );
 
 CREATE TABLE sessions(
-    refresh_token VARCHAR(128) NOT NULL,
+    refresh_token VARCHAR(256) NOT NULL,
     expires_at TIMESTAMP NOT NULL,
     
     user_id BIGINT REFERENCES users(id)
@@ -53,7 +53,8 @@ CREATE TABLE reviews(
 
 CREATE TABLE category(
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL
+    name VARCHAR(255) NOT NULL,
+    img_path VARCHAR(255)
 );
 
 CREATE TABLE subcategory(
@@ -74,7 +75,7 @@ CREATE TABLE products(
     name VARCHAR(255) NOT NULL,
     price NUMERIC(10, 2) NOT NULL,
     quantity INTEGER NOT NULL,
-    img_path VARCHAR(255),
+    quantity_sales BIGINT NOT NULL,
     description TEXT,
     uploaded_at TIMESTAMP DEFAULT now(), 
 
@@ -107,3 +108,16 @@ CREATE TABLE project_info(
 );
 
 INSERT INTO project_info (total_rating, total_reviews) VALUES (0.0, 0);
+
+
+
+
+
+
+
+INSERT INTO category (name, img_path) VALUES ('Twitter', 'path/to/img');
+INSERT INTO category (name, img_path) VALUES ('Facebook', 'path/to/img');
+
+INSERT INTO subcategory (name, hold_time, category_id) VALUES ('accounts', 60, 2);
+
+INSERT INTO products (name, price, quantity, quantity_sales, description, category_id, subcategory_id) VALUES ('Facebook account', 99, 15000, 500, 'Хорошие аккаунты', 2, 1);

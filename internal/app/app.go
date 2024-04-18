@@ -27,6 +27,16 @@ import (
 	"github.com/sixojke/internal/service"
 )
 
+// @title All social networks shop API
+// @version 1.0
+// @description REST API for shop
+
+// @host localhost:8009
+// @BasePath /api/v1
+
+// @securityDefinitions.apikey UsersAuth
+// @in header
+// @name Authorization
 func Run() {
 	cfg, err := config.InitConfig()
 	if err != nil {
@@ -34,18 +44,12 @@ func Run() {
 	}
 
 	payokClient := payok.NewClient(cfg.Payok.ShopId, cfg.Payok.SuccessUrl, cfg.Payok.SecretKey)
-	fmt.Println(payokClient.GetLink(&payok.Payment{
-		PaymentId:   "342345",
-		Amount:      12343,
-		Description: "tes3t",
-		Currency:    "RUB",
-	}))
 
 	hasher := hash.NewSHA1Hasher("my-salt")
 
 	otpGenerator := otp.NewGOTPGenerator()
 
-	emaildSender, err := email.NewSMTPSender(cfg.EmailSender.From, cfg.EmailSender.Password, cfg.Postgres.Host, cfg.EmailSender.Port)
+	emaildSender, err := email.NewSMTPSender(cfg.EmailSender.From, cfg.EmailSender.Password, cfg.EmailSender.Host, cfg.EmailSender.Port)
 	if err != nil {
 		log.Fatal(fmt.Errorf("email sender: %v", err))
 	}
@@ -79,7 +83,7 @@ func Run() {
 		TokenManager: tokenManager,
 		PayokClient:  payokClient,
 	})
-	handler := delivery.NewHandler(cfg.HandlerConfig, services, tokenManager)
+	handler := delivery.NewHandler(cfg.Handler, services, tokenManager)
 
 	srv := server.NewServer(cfg.HTTPServer, handler.Init())
 	go func() {
