@@ -7,9 +7,9 @@ import (
 )
 
 type Users interface {
-	Create(user *domain.User) (int, error)
+	Create(user *domain.User, code string) (int, error)
 	GetByCredentials(username, password string) (*domain.User, error)
-	GetByRefreshToken(refreshToken string) (*domain.User, error)
+	GetByRefreshToken(refreshToken string) (*domain.Session, error)
 	Verify(userId int, code string) error
 	SetSession(session *domain.Session) error
 }

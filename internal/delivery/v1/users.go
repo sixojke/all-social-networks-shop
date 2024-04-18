@@ -15,10 +15,11 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 		users.POST("/sign-up", h.userSignUp)
 		users.POST("/sign-in", h.userSignIn)
 		users.POST("/auth/refresh", h.userRefresh)
+		users.POST("/verify", h.userVerify)
 
 		authenticated := users.Group("/", h.userIdentity)
 		{
-			authenticated.POST("/verify/:code", h.userVerify)
+			_ = authenticated
 		}
 	}
 }
@@ -37,7 +38,7 @@ type userSignUpInp struct {
 // @Produce  json
 // @Param input body userSignUpInp true "sign up info"
 // @Success 201 {string} string "ok"
-// @Failure 400,404 {object} response
+// @Failure 400,404,422 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
 // @Router /users/sign-up [post]
@@ -55,6 +56,12 @@ func (h *Handler) userSignUp(c *gin.Context) {
 		Email:    inp.Email,
 	})
 	if err != nil {
+		if err == domain.ErrDuplicateKey {
+			newResponse(c, http.StatusUnprocessableEntity, err.Error())
+
+			return
+		}
+
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return
@@ -76,7 +83,7 @@ type userSignInInp struct {
 // @Produce  json
 // @Param input body userSignInInp true "sign up info"
 // @Success 200 {object} tokenResponse
-// @Failure 400,404 {object} response
+// @Failure 400,403,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
 // @Router /users/sign-in [post]
@@ -99,12 +106,17 @@ func (h *Handler) userSignIn(c *gin.Context) {
 			return
 		}
 
+		if errors.Is(err, domain.ErrUserNotVerified) {
+			newResponse(c, http.StatusForbidden, err.Error())
+
+			return
+		}
+
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return
 	}
 
-	c.Header("Cookie", tokens.AccessToken)
 	c.JSON(http.StatusOK, tokenResponse{
 		AccessToken:  tokens.AccessToken,
 		RefreshToken: tokens.RefreshToken,
@@ -153,6 +165,11 @@ func (h *Handler) userRefresh(c *gin.Context) {
 	})
 }
 
+type UserVerifyInp struct {
+	Id   int    `binding:"required"`
+	Code string `binding:"required"`
+}
+
 // @Summary User Verify Registration
 // @Security UsersAuth
 // @Tags users-auth
@@ -160,28 +177,21 @@ func (h *Handler) userRefresh(c *gin.Context) {
 // @ModuleID userVerify
 // @Accept  json
 // @Produce  json
-// @Param code path string true "verification code"
+// @Param input body UserVerifyInp true "user verify"
 // @Success 200 {object} tokenResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /users/verify/{code} [post]
+// @Router /users/verify/ [post]
 func (h *Handler) userVerify(c *gin.Context) {
-	code := c.Param("code")
-	if code == "" {
-		newResponse(c, http.StatusBadRequest, "code is empty")
+	var inp UserVerifyInp
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
 
 		return
 	}
 
-	id, err := getUserId(c)
-	if err != nil {
-		newResponse(c, http.StatusInternalServerError, err.Error())
-
-		return
-	}
-
-	if err := h.services.Users.Verify(id, code); err != nil {
+	if err := h.services.Users.Verify(inp.Id, inp.Code); err != nil {
 		if errors.Is(err, domain.ErrVerificationCodeInvalid) {
 			newResponse(c, http.StatusBadRequest, err.Error())
 

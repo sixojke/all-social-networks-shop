@@ -174,6 +174,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/v1.response"
                         }
                     },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -189,7 +195,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/verify/{code}": {
+        "/users/verify/": {
             "post": {
                 "security": [
                     {
@@ -209,11 +215,13 @@ const docTemplate = `{
                 "summary": "User Verify Registration",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "verification code",
-                        "name": "code",
-                        "in": "path",
-                        "required": true
+                        "description": "user verify",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.UserVerifyInp"
+                        }
                     }
                 ],
                 "responses": {
@@ -252,6 +260,21 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "v1.UserVerifyInp": {
+            "type": "object",
+            "required": [
+                "code",
+                "id"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
         "v1.refreshTokenInp": {
             "type": "object",
             "required": [

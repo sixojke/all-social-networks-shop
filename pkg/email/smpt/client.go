@@ -19,6 +19,7 @@ func NewSMTPSender(from, pass, host string, port int) (*SMTPSender, error) {
 	if !email.IsEmailValid(from) {
 		return nil, errors.New("invalid from email")
 	}
+	fmt.Println(from, pass, host, port)
 
 	return &SMTPSender{from: from, pass: pass, host: host, port: port}, nil
 }

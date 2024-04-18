@@ -9,7 +9,7 @@ type User struct {
 	Email        string    `json:"email" db:"email"`
 	Balance      float64   `json:"balance" db:"balance"`
 	LastVisitAt  time.Time `json:"last_visit_at" db:"last_visit_at"`
-	RegisteredAt time.Time `json:"registered_at"`
+	RegisteredAt time.Time `json:"registered_at" db:"registered_at"`
 }
 
 type Session struct {

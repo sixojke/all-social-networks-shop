@@ -1,8 +1,8 @@
 CREATE TABLE users(
     id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(32),
+    username VARCHAR(32) UNIQUE,
     password VARCHAR(256),
-    email VARCHAR(255),
+    email VARCHAR(255) UNIQUE,
     balance NUMERIC(10, 2),
     last_visit_at TIMESTAMP NOT NULL,
     registered_at TIMESTAMP DEFAULT now()
@@ -10,13 +10,13 @@ CREATE TABLE users(
 
 CREATE TABLE verification(
     verified bool DEFAULT false,
-    code VARCHAR(10),
+    code VARCHAR(32),
 
     user_id BIGINT REFERENCES users(id)
 );
 
 CREATE TABLE sessions(
-    refresh_token VARCHAR(128) NOT NULL,
+    refresh_token VARCHAR(256) NOT NULL,
     expires_at TIMESTAMP NOT NULL,
     
     user_id BIGINT REFERENCES users(id)

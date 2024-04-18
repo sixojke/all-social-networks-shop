@@ -49,7 +49,7 @@ func Run() {
 
 	otpGenerator := otp.NewGOTPGenerator()
 
-	emaildSender, err := email.NewSMTPSender(cfg.EmailSender.From, cfg.EmailSender.Password, cfg.Postgres.Host, cfg.EmailSender.Port)
+	emaildSender, err := email.NewSMTPSender(cfg.EmailSender.From, cfg.EmailSender.Password, cfg.EmailSender.Host, cfg.EmailSender.Port)
 	if err != nil {
 		log.Fatal(fmt.Errorf("email sender: %v", err))
 	}
