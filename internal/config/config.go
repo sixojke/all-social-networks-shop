@@ -16,14 +16,14 @@ const (
 )
 
 type Config struct {
-	Postgres      Postgres
-	Redis         Redis
-	Cache         Cache
-	HTTPServer    HTTPServer
-	HandlerConfig Handler
-	Service       Service
-	EmailSender   EmailSender
-	Payok         Payok
+	Postgres    Postgres
+	Redis       Redis
+	Cache       Cache
+	HTTPServer  HTTPServer
+	Handler     Handler
+	Service     Service
+	EmailSender EmailSender
+	Payok       Payok
 }
 
 type EmailSender struct {
@@ -60,7 +60,8 @@ type HTTPServer struct {
 	MaxHeaderBytes int           `mapstructure:"max_header_bytes"`
 }
 
-type Handler struct{}
+type Handler struct {
+}
 
 type Service struct {
 	Users UsersService `mapstructure:"users"`
@@ -126,6 +127,10 @@ func unmarshal(cfg *Config) error {
 
 	if err := viper.UnmarshalKey("payok", &cfg.Payok); err != nil {
 		return fmt.Errorf("unmarshal email_sender config: %v", err)
+	}
+
+	if err := viper.UnmarshalKey("handler", &cfg.Handler); err != nil {
+		return fmt.Errorf("unmarshal handler config: %v", err)
 	}
 
 	cfg.Payok.SecretKey = os.Getenv("PAYOK_KEY")

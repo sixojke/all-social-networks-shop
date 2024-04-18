@@ -40,3 +40,6 @@ service:
       jwt:
         access_token_ttl: 15m
         refresh_token_ttl: 14400m
+
+handler:
+  

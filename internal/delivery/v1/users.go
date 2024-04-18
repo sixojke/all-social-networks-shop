@@ -29,6 +29,18 @@ type userSignUpInp struct {
 	Email    string `json:"email" binding:"required,email,max=64"`
 }
 
+// @Summary User SignUp
+// @Tags users-auth
+// @Description create user account
+// @ModuleID userSignUp
+// @Accept  json
+// @Produce  json
+// @Param input body userSignUpInp true "sign up info"
+// @Success 201 {string} string "ok"
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/sign-up [post]
 func (h *Handler) userSignUp(c *gin.Context) {
 	var inp userSignUpInp
 	if err := c.BindJSON(&inp); err != nil {
@@ -48,7 +60,7 @@ func (h *Handler) userSignUp(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, idResponse{ID: id})
+	c.JSON(http.StatusCreated, idResponse{ID: id})
 }
 
 type userSignInInp struct {
@@ -56,6 +68,18 @@ type userSignInInp struct {
 	Password string `json:"password" binding:"required,min=8,max=64"`
 }
 
+// @Summary User SignIn
+// @Tags users-auth
+// @Description user sign in
+// @ModuleID userSignIn
+// @Accept  json
+// @Produce  json
+// @Param input body userSignInInp true "sign up info"
+// @Success 200 {object} tokenResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/sign-in [post]
 func (h *Handler) userSignIn(c *gin.Context) {
 	var inp userSignInInp
 	if err := c.BindJSON(&inp); err != nil {
@@ -91,6 +115,17 @@ type refreshTokenInp struct {
 	Token string `json:"refresh_token" binding:"required"`
 }
 
+// @Summary User Refresh Tokens
+// @Tags users-auth
+// @Description user refresh tokens
+// @Accept  json
+// @Produce  json
+// @Param input body refreshTokenInp true "sign up info"
+// @Success 200 {object} tokenResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/auth/refresh [post]
 func (h *Handler) userRefresh(c *gin.Context) {
 	var inp refreshTokenInp
 	if err := c.BindJSON(&inp); err != nil {
@@ -118,6 +153,19 @@ func (h *Handler) userRefresh(c *gin.Context) {
 	})
 }
 
+// @Summary User Verify Registration
+// @Security UsersAuth
+// @Tags users-auth
+// @Description user verify registration
+// @ModuleID userVerify
+// @Accept  json
+// @Produce  json
+// @Param code path string true "verification code"
+// @Success 200 {object} tokenResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/verify/{code} [post]
 func (h *Handler) userVerify(c *gin.Context) {
 	code := c.Param("code")
 	if code == "" {
