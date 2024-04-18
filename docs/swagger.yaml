@@ -20,6 +20,12 @@ definitions:
     - code
     - id
     type: object
+  v1.dataResponse:
+    properties:
+      count:
+        type: integer
+      data: {}
+    type: object
   v1.paginationResponse:
     properties:
       pagination:
@@ -83,11 +89,79 @@ info:
   title: All social networks shop API
   version: "1.0"
 paths:
+  /categories:
+    get:
+      consumes:
+      - application/json
+      description: get all categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Get all categories
+      tags:
+      - categories
+  /categories/{category_id}:
+    get:
+      consumes:
+      - application/json
+      description: get subcategories by category_id
+      parameters:
+      - description: category id
+        in: path
+        name: category_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.dataResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Get subcategories
+      tags:
+      - subcategories
   /products:
     get:
       consumes:
       - application/json
-      description: get all products
+      description: Get all products with pagination and filters
       parameters:
       - default: 10
         description: Number of items per page
@@ -123,7 +197,7 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/v1.response'
-      summary: User Verify Registration
+      summary: Get all products
       tags:
       - products
   /users/auth/refresh:

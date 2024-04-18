@@ -20,6 +20,12 @@ func (h *Handler) initProductsRoutes(api *gin.RouterGroup) {
 		// 	// subcategory.GET("/:id", h.getProductBySubcategoryId)
 		// }
 	}
+
+	categories := api.Group("/categories")
+	{
+		categories.GET("", h.categoriesAll)
+		categories.GET("/:id", h.subcategoriesById)
+	}
 }
 
 // type createProductInp struct {
@@ -56,9 +62,9 @@ func (h *Handler) initProductsRoutes(api *gin.RouterGroup) {
 // 	c.JSON(http.StatusOK, idResponse{ID: id})
 // }
 
-// @Summary User Verify Registration
+// @Summary Get all products
 // @Tags products
-// @Description get all products
+// @Description Get all products with pagination and filters
 // @ModuleID allProducts
 // @Accept  json
 // @Produce  json
@@ -173,3 +179,61 @@ func (h *Handler) productsGetAll(c *gin.Context) {
 
 // 	c.JSON(http.StatusOK, product)
 // }
+
+// @Summary Get all categories
+// @Tags categories
+// @Description get all categories
+// @ModuleID allCategories
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} dataResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /categories [get]
+func (h *Handler) categoriesAll(c *gin.Context) {
+	categories, err := h.services.Products.GetCategories()
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, dataResponse{
+		Data:  categories,
+		Count: int64(len(*categories)),
+	})
+}
+
+// @Summary Get subcategories
+// @Tags subcategories
+// @Description  get subcategories by category_id
+// @ModuleID subcategoriesById
+// @Accept  json
+// @Produce  json
+// @Param category_id path int true "category id"
+// @Success 200 {object} dataResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /categories/{category_id} [get]
+func (h *Handler) subcategoriesById(c *gin.Context) {
+	categoryId, err := processIntParam(c.Param("id"))
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	subcategories, err := h.services.Products.GetSubcategories(categoryId)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, dataResponse{
+		Data:  subcategories,
+		Count: int64(len(*subcategories)),
+	})
+}
