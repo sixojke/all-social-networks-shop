@@ -8,6 +8,7 @@ import (
 	email "github.com/sixojke/pkg/email/smpt"
 	"github.com/sixojke/pkg/hash"
 	"github.com/sixojke/pkg/otp"
+	"github.com/sixojke/pkg/payments/payok"
 )
 
 type UserSignUnInp struct {
@@ -47,6 +48,7 @@ type Deps struct {
 	OtpGenerator otp.Generator
 	EmailSender  *email.SMTPSender
 	TokenManager auth.TokenManager
+	PayokClient  payok.Service
 }
 
 type Service struct {

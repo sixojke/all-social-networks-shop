@@ -33,6 +33,7 @@ type Repository struct {
 
 func NewRepository(deps *Deps) *Repository {
 	return &Repository{
+		Users:    NewUsersPostgres(deps.Postgres),
 		Products: NewProductsPostgres(deps.Postgres),
 	}
 }

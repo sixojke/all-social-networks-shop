@@ -68,9 +68,10 @@ func (r *UsersPostgres) Create(user *domain.User) (int, error) {
 }
 
 func (r *UsersPostgres) GetByCredentials(username, password string) (*domain.User, error) {
+	fmt.Println(username, password)
 	query := fmt.Sprintf(`
 	SELECT 
-		id, username, email, balance, verified
+		id, username, email, balance
 	FROM %s 
 	WHERE username = $1 AND password = $2`, users)
 

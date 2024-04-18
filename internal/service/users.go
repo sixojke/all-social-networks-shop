@@ -26,6 +26,7 @@ func NewUsersService(repo repository.Users, config config.UsersService, tokenMan
 	return &UsersService{
 		repo:         repo,
 		config:       config,
+		tokenManager: tokenManager,
 		hasher:       hasher,
 		otpGenerator: otpGenerator,
 		email:        email,
@@ -38,7 +39,7 @@ func (s *UsersService) SignUp(inp UserSignUnInp) (id int, err error) {
 		return 0, err
 	}
 
-	verificationCode := s.otpGenerator.RandomSecret(s.config.VerificationCodeLength)
+	verificationCode := s.otpGenerator.RandomSecret(s.config.Auth.VerificationCodeLength)
 
 	id, err = s.repo.Create(&domain.User{
 		Username:    inp.Username,
@@ -99,7 +100,7 @@ func (s *UsersService) createSession(userId int) (Tokens, error) {
 		err    error
 	)
 
-	tokens.AccessToken, err = s.tokenManager.NewJWT(strconv.Itoa(userId), s.config.JWT.AccessTokenTTL)
+	tokens.AccessToken, err = s.tokenManager.NewJWT(strconv.Itoa(userId), s.config.Auth.JWT.AccessTokenTTL)
 	if err != nil {
 		return tokens, err
 	}
@@ -111,7 +112,7 @@ func (s *UsersService) createSession(userId int) (Tokens, error) {
 
 	session := domain.Session{
 		RefreshToken: tokens.RefreshToken,
-		ExpiresAt:    time.Now().Add(s.config.JWT.RefreshTokenTTL),
+		ExpiresAt:    time.Now().Add(s.config.Auth.JWT.RefreshTokenTTL),
 		UserId:       userId,
 	}
 

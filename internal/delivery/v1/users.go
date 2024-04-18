@@ -80,6 +80,7 @@ func (h *Handler) userSignIn(c *gin.Context) {
 		return
 	}
 
+	c.Header("Cookie", tokens.AccessToken)
 	c.JSON(http.StatusOK, tokenResponse{
 		AccessToken:  tokens.AccessToken,
 		RefreshToken: tokens.RefreshToken,

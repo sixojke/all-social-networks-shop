@@ -13,14 +13,14 @@ CREATE TABLE verification(
     code VARCHAR(10),
 
     user_id BIGINT REFERENCES users(id)
-)
+);
 
 CREATE TABLE sessions(
     refresh_token VARCHAR(128) NOT NULL,
     expires_at TIMESTAMP NOT NULL,
     
     user_id BIGINT REFERENCES users(id)
-)
+);
 
 CREATE TABLE suppliers(
     id SERIAL PRIMARY KEY,
@@ -38,7 +38,7 @@ CREATE TABLE buyers(
     total_expenses NUMERIC(10, 2),
     total_orders INTEGER NOT NULL,
 
-    user_id BIGINT REFERENCES users(id),
+    user_id BIGINT REFERENCES users(id)
 );
 
 CREATE TABLE reviews(
@@ -62,7 +62,7 @@ CREATE TABLE subcategory(
     hold_time SMALLINT NOT NULL,
 
     category_id INTEGER REFERENCES category(id)
-)
+);
 
 CREATE TABLE filters(
     id SERIAL PRIMARY KEY,
@@ -84,10 +84,26 @@ CREATE TABLE products(
 
 CREATE TABLE orders(
     id BIGSERIAL PRIMARY KEY,
-    status VARCHAR(32) NOT NULL
+    amount NUMERIC(10, 2) NOT NULL,
+    status VARCHAR(32) NOT NULL,
     devilery_time TIMESTAMP,
     created_at TIMESTAMP DEFAULT now(),
 
     product_id BIGINT REFERENCES products(id),
     buyer_id INTEGER REFERENCES buyers(id)
 );
+
+CREATE TABLE project_reviews(
+    id SERIAL PRIMARY KEY,
+    rating DOUBLE PRECISION NOT NULL,
+    text TEXT,
+    created_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE project_info(
+    id SERIAL PRIMARY KEY,
+    total_rating DOUBLE PRECISION NOT NULL,
+    total_reviews INTEGER NOT NULL
+);
+
+INSERT INTO project_info (total_rating, total_reviews) VALUES (0.0, 0);

@@ -16,14 +16,20 @@ type Handler struct {
 	tokenManager auth.TokenManager
 }
 
-func NewHandler(service *service.Service) *Handler {
+func NewHandler(config config.Handler, service *service.Service, tokenManager auth.TokenManager) *Handler {
 	return &Handler{
-		service: service,
+		config:       config,
+		service:      service,
+		tokenManager: tokenManager,
 	}
 }
 
 func (h *Handler) Init() *gin.Engine {
 	router := gin.Default()
+
+	router.Use(
+		corsMiddleware,
+	)
 
 	// Init router
 	router.GET("/ping", func(c *gin.Context) {

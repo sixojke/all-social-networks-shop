@@ -22,6 +22,15 @@ type Config struct {
 	HTTPServer    HTTPServer
 	HandlerConfig Handler
 	Service       Service
+	EmailSender   EmailSender
+	Payok         Payok
+}
+
+type EmailSender struct {
+	From     string `mapstructure:"from"`
+	Password string `mapstructure:"password"`
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
 }
 
 type Postgres struct {
@@ -58,7 +67,7 @@ type Service struct {
 }
 
 type UsersService struct {
-	Auth `mapstructure:"auth"`
+	Auth Auth `mapstructure:"auth"`
 }
 type Auth struct {
 	JWT                    JWT `mapstructure:"jwt"`
@@ -69,6 +78,12 @@ type Auth struct {
 type JWT struct {
 	AccessTokenTTL  time.Duration `mapstructure:"access_token_ttl"`
 	RefreshTokenTTL time.Duration `mapstructure:"refresh_token_ttl"`
+}
+
+type Payok struct {
+	ShopId     string `mapstructure:"shop_id"`
+	SuccessUrl string `mapstructure:"success_url"`
+	SecretKey  string
 }
 
 func InitConfig() (*Config, error) {
@@ -85,6 +100,10 @@ func InitConfig() (*Config, error) {
 }
 
 func unmarshal(cfg *Config) error {
+	if err := viper.UnmarshalKey("email_sender", &cfg.EmailSender); err != nil {
+		return fmt.Errorf("unmarshal email_sender config: %v", err)
+	}
+
 	if err := viper.UnmarshalKey("postgres", &cfg.Postgres); err != nil {
 		return fmt.Errorf("unmarshal postgres config: %v", err)
 	}
@@ -105,7 +124,14 @@ func unmarshal(cfg *Config) error {
 		return fmt.Errorf("unmarshal http server config: %v", err)
 	}
 
+	if err := viper.UnmarshalKey("payok", &cfg.Payok); err != nil {
+		return fmt.Errorf("unmarshal email_sender config: %v", err)
+	}
+
+	cfg.Payok.SecretKey = os.Getenv("PAYOK_KEY")
+
 	cfg.Service.Users.Auth.SigningKey = os.Getenv("SIGNING_KEY")
+
 	cfg.Postgres.Username = os.Getenv("POSTGRES_USER")
 	cfg.Postgres.Password = os.Getenv("POSTGRES_PASSWORD")
 
