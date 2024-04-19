@@ -24,8 +24,18 @@ func NewProductsService(repo repository.Products) *ProductsService {
 // 	return id, nil
 // }
 
-func (s *ProductsService) GetAll(limit, offset int) (*domain.Pagination, error) {
-	products, err := s.repo.GetAll(limit, offset)
+type ProductFilters struct {
+	Limit         int
+	Offset        int
+	CategoryId    int
+	SubcategoryId int
+	IsAvailable   int
+	SortPrice     string
+	SortDefect    string
+}
+
+func (s *ProductsService) GetAll(filters *domain.ProductFilters) (*domain.Pagination, error) {
+	products, err := s.repo.GetAll(filters)
 	if err != nil {
 		return nil, fmt.Errorf("error product service GetAll: %v", err)
 	}

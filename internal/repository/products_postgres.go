@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/sirupsen/logrus"
 	"github.com/sixojke/internal/domain"
 )
 
@@ -35,18 +37,71 @@ func NewProductsPostgres(db *sqlx.DB) *ProductsPostgres {
 // 	return id, nil
 // }
 
-func (r *ProductsPostgres) GetAll(limit, offset int) (*domain.Pagination, error) {
+func (r *ProductsPostgres) GetAll(filters *domain.ProductFilters) (*domain.Pagination, error) {
 	query := fmt.Sprintf(`
 	SELECT 
 		products.id, products.name, products.description, products.price, products.quantity, 
 		products.quantity_sales, products.category_id, products.uploaded_at, category.img_path
 	FROM %s
-	INNER JOIN %s ON products.category_id = category.id
-	ORDER BY products.quantity_sales
-	LIMIT $1 OFFSET $2`, products, category)
+	INNER JOIN %s ON products.category_id = category.id `, products, category)
+
+	where := make([]string, 0)
+	whereArgs := make([]interface{}, 0)
+	args := make([]interface{}, 0)
+	argsId := 1
+
+	if filters.CategoryId != 0 {
+		where = append(where, fmt.Sprintf("category_id=$%v ", argsId))
+		whereArgs = append(whereArgs, filters.CategoryId)
+		args = append(args, filters.CategoryId)
+		argsId++
+	}
+
+	if filters.SubcategoryId != 0 {
+		where = append(where, fmt.Sprintf("subcategory_id=$%v ", argsId))
+		whereArgs = append(whereArgs, filters.SubcategoryId)
+		args = append(args, filters.SubcategoryId)
+		argsId++
+	}
+
+	if filters.IsAvailable == 1 {
+		where = append(where, fmt.Sprintf("quantity > $%v ", argsId))
+		whereArgs = append(whereArgs, 0)
+		args = append(args, 0)
+		argsId++
+	}
+
+	if len(where) != 0 {
+		query += "WHERE " + strings.Join(where, "AND ")
+	}
+
+	if filters.SortPrice == "asc" {
+		query += "ORDER BY products.price ASC "
+	} else if filters.SortPrice == "desc" {
+		query += "ORDER BY products.price DESC "
+	} else if filters.SortDefect == "asc" {
+		query += "ORDER BY products.price ASC "
+	} else if filters.SortDefect == "desc" {
+		query += "ORDER BY products.price DESC "
+	} else {
+		query += "ORDER BY products.quantity_sales "
+	}
+
+	pagination := make([]string, 0)
+
+	pagination = append(pagination, fmt.Sprintf("LIMIT $%v", argsId))
+	args = append(args, filters.Limit)
+	argsId++
+
+	pagination = append(pagination, fmt.Sprintf("OFFSET $%v", argsId))
+	args = append(args, filters.Offset)
+
+	query += strings.Join(pagination, " ")
+	logrus.Info(query)
+	logrus.Info(args...)
 
 	var p []domain.Product
-	if err := r.db.Select(&p, query, limit, offset); err != nil {
+	if err := r.db.Select(&p, query, args...); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
@@ -56,18 +111,22 @@ func (r *ProductsPostgres) GetAll(limit, offset int) (*domain.Pagination, error)
 
 	query = fmt.Sprintf(`
 	SELECT COUNT(*)
-	FROM %s`, products)
+	FROM %s `, products)
+
+	if len(where) != 0 {
+		query += "WHERE " + strings.Join(where, "AND ")
+	}
 
 	var rows int
-	if err := r.db.QueryRow(query).Scan(&rows); err != nil {
+	if err := r.db.QueryRow(query, whereArgs...).Scan(&rows); err != nil {
 		return nil, fmt.Errorf("error select count rows: %v", err)
 	}
 
 	return &domain.Pagination{
 		Data:   p,
 		Total:  rows,
-		Limit:  limit,
-		Offset: offset,
+		Limit:  filters.Limit,
+		Offset: filters.Offset,
 	}, nil
 }
 

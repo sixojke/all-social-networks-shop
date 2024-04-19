@@ -15,6 +15,16 @@ type Product struct {
 	SubcategoryId int       `json:"subcategory_id,omitempty" db:"subcategory_id"`
 }
 
+type ProductFilters struct {
+	Limit         int
+	Offset        int
+	CategoryId    int
+	SubcategoryId int
+	IsAvailable   int
+	SortPrice     string
+	SortDefect    string
+}
+
 type Category struct {
 	Id      int    `json:"id" db:"id"`
 	Name    string `json:"name" db:"name"`

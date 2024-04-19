@@ -130,7 +130,7 @@ const docTemplate = `{
                 "tags": [
                     "products"
                 ],
-                "summary": "Get all products",
+                "summary": "Products with filters",
                 "parameters": [
                     {
                         "maximum": 100,
@@ -145,6 +145,37 @@ const docTemplate = `{
                         "default": 0,
                         "description": "Offset for pagination",
                         "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "category_id",
+                        "name": "category_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "subcategory_id",
+                        "name": "subcategory_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Product availability: enter 1 if true, 0 if false",
+                        "name": "is_available",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort price: enter asc or desc",
+                        "name": "sort_price",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort defect: enter asc or desc",
+                        "name": "sort_defect",
                         "in": "query"
                     }
                 ],

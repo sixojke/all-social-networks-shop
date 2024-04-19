@@ -62,7 +62,7 @@ func (h *Handler) initProductsRoutes(api *gin.RouterGroup) {
 // 	c.JSON(http.StatusOK, idResponse{ID: id})
 // }
 
-// @Summary Get all products
+// @Summary Products with filters
 // @Tags products
 // @Description Get all products with pagination and filters
 // @ModuleID allProducts
@@ -70,6 +70,11 @@ func (h *Handler) initProductsRoutes(api *gin.RouterGroup) {
 // @Produce  json
 // @Param limit query int false "Number of items per page" default(10) maximum(100)
 // @Param offset query int false "Offset for pagination" default(0)
+// @Param category_id query int false "category_id"
+// @Param subcategory_id query int false "subcategory_id"
+// @Param is_available query int false "Product availability: enter 1 if true, 0 if false" default(0)
+// @Param sort_price query string false "sort price: enter asc or desc"
+// @Param sort_defect query string false "sort defect: enter asc or desc"
 // @Success 200 {object} paginationResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
@@ -86,11 +91,29 @@ func (h *Handler) productsGetAll(c *gin.Context) {
 		offset = 0
 	}
 
+	categoryId, _ := processIntParam(c.Query("category_id"))
+
+	subcategoryId, _ := processIntParam(c.Query("subcategory_id"))
+
+	isAvailable, _ := processIntParam(c.Query("is_available"))
+
+	sortPrice := c.Query("sort_price")
+
+	sortDefect := c.Query("sort_defect")
+
 	if limit > h.config.Pagination.MaxLimit {
 		limit = h.config.Pagination.MaxLimit
 	}
 
-	products, err := h.services.Products.GetAll(limit, offset)
+	products, err := h.services.Products.GetAll(&domain.ProductFilters{
+		Limit:         limit,
+		Offset:        offset,
+		CategoryId:    categoryId,
+		SubcategoryId: subcategoryId,
+		IsAvailable:   isAvailable,
+		SortPrice:     sortPrice,
+		SortDefect:    sortDefect,
+	})
 	if err != nil {
 		if errors.Is(err, domain.ErrProductsNotFound) {
 			newResponse(c, http.StatusOK, err.Error())

@@ -118,6 +118,8 @@ INSERT INTO project_info (total_rating, total_reviews) VALUES (0.0, 0);
 INSERT INTO category (name, img_path) VALUES ('Twitter', 'path/to/img');
 INSERT INTO category (name, img_path) VALUES ('Facebook', 'path/to/img');
 
+INSERT INTO subcategory (name, hold_time, category_id) VALUES ('accounts', 60, 1);
 INSERT INTO subcategory (name, hold_time, category_id) VALUES ('accounts', 60, 2);
 
-INSERT INTO products (name, price, quantity, quantity_sales, description, category_id, subcategory_id) VALUES ('Facebook account', 99, 15000, 500, 'Хорошие аккаунты', 2, 1);
+INSERT INTO products (name, price, quantity, quantity_sales, description, category_id, subcategory_id) VALUES ('Twitter account', 98, 15000, 500, 'Хорошие аккаунты', 1, 1);
+INSERT INTO products (name, price, quantity, quantity_sales, description, category_id, subcategory_id) VALUES ('Facebook account', 99, 15000, 500, 'Хорошие аккаунты', 2, 2);

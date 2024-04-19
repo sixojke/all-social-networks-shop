@@ -16,7 +16,7 @@ type Users interface {
 
 type Products interface {
 	// Create(product *domain.Product) (int, error)
-	GetAll(limit, offset int) (*domain.Pagination, error)
+	GetAll(filters *domain.ProductFilters) (*domain.Pagination, error)
 	// GetById(id int) (*domain.Product, error)
 	// GetBySubcategory(id int) (*[]domain.Product, error)
 	// Update(product *domain.Product) (*domain.Product, error)
