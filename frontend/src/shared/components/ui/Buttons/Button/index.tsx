@@ -7,26 +7,28 @@ type Props = {
 
 export const Button: FC<Props> = ({
   className,
+  disabled,
   children,
   border,
   ...props
 }) => {
   return (
     <button
+      disabled={disabled}
       className={classNames(
         "bg-main-blue",
-        "rounded-3xl",
         "text-main-white",
+        "rounded-3xl",
         "text-[18px]",
         "p-0",
-        "hover:brightness-110",
         "transition",
-        "px-[16px]",
+        "px-[20px]",
         "font-semibold",
-        "py-[4.5px]",
+        "py-[10px]",
         "select-none",
-        "active:brightness-125",
         {
+          ["active:brightness-125"]: !disabled,
+          ["hover:brightness-110"]: !disabled,
           ["border-solid border-main-blue border-2"]: border,
           ["border-none"]: !border,
         },

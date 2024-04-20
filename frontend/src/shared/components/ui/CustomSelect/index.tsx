@@ -5,10 +5,12 @@ import { useId } from "react";
 
 type SelectProps = {
   label?: string;
+  width?: string;
 };
 
 export const CustomSelect = <TData extends IOption = IOption>({
   options,
+  width,
   label,
   isLoading,
   ...props
@@ -16,7 +18,7 @@ export const CustomSelect = <TData extends IOption = IOption>({
   const customSelectStyles = getSelectStyles<TData>();
 
   return (
-    <div>
+    <div className={width}>
       <p className="text-main-blue-gray text-base mb-2">{label}</p>
       <Select
         instanceId={useId()}

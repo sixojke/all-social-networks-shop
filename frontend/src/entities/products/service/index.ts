@@ -8,7 +8,7 @@ const productsApi = rootApi.injectEndpoints({
       IGetAllProductsRequest
     >({
       query: (data) => ({
-        url: "/products/",
+        url: "/products",
         method: "GET",
         params: data,
       }),

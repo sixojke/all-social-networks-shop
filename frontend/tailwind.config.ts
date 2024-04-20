@@ -11,7 +11,6 @@ const config: Config = {
     colors: {
       "main-light-blue": "#E6F0FF",
       "main-blue": "#99C2FF",
-      "main-dark-blue": "#0065FD",
       "main-blue-gray": "#44517E",
       "main-error-red": "#E72734",
       "main-error-dark-red": "#9C304A",
@@ -20,6 +19,7 @@ const config: Config = {
       "main-white": "#FFFFFF",
       "main-black": "#001433",
       "main-light-gray": "#999DA6",
+      "main-dark-blue": "#0065FD",
     },
   },
   plugins: [],
