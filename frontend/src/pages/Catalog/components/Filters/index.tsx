@@ -13,9 +13,10 @@ import { transformFormFiltersToRequest } from "../../helpers";
 
 type Props = {
   setFilters: (data: IGetAllProductsRequest) => void;
+  setOffset: (page: number) => void;
 };
 
-export const Filters: FC<Props> = ({ setFilters }) => {
+export const Filters: FC<Props> = ({ setFilters, setOffset }) => {
   const formApi = useForm<FiltersFormValues>({
     mode: "onChange",
     defaultValues: {
@@ -40,16 +41,16 @@ export const Filters: FC<Props> = ({ setFilters }) => {
     );
 
   useEffect(() => {
-    if (category === null) {
-      setValue("subcategory", null);
-    }
-  }, [category]);
+    setValue("subcategory", null);
+  }, [category?.id]);
 
   const onSubmit = (data: FiltersFormValues) => {
+    setOffset(1);
     setFilters(transformFormFiltersToRequest(data));
   };
 
   const formReset = () => {
+    setOffset(1);
     setFilters({});
     reset();
   };
@@ -114,6 +115,7 @@ export const Filters: FC<Props> = ({ setFilters }) => {
               Найти
             </Button>
             <Button
+              type="button"
               className="!text-main-dark-blue bg-main-light-blue"
               onClick={formReset}
             >

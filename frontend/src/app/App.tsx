@@ -1,6 +1,6 @@
 import type { AppProps } from "next/app";
 import "./globals.css";
-import { store } from "./store";
+import { store } from "@/app/store";
 import { Provider } from "react-redux";
 import { WithModalContext } from "@/hocs/WithModalContext";
 import { AppModal } from "@/shared/contexts/Modal/Modal";

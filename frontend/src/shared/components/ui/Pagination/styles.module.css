@@ -1,0 +1,33 @@
+.paginate {
+  display: flex;
+  align-items: center;
+  column-gap: 20px;
+  user-select: none;
+  color: black;
+}
+
+.active {
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  background: #0065fd;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  transition-duration: 0.3s;
+}
+
+.active:hover {
+  background-color: #99c2ff;
+}
+
+.page {
+  padding: 5px 13px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition-duration: 0.3s;
+}
+
+.page:hover {
+  background-color: #99c2ff;
+  color: white;
+}

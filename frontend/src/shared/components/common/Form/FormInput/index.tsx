@@ -1,9 +1,7 @@
-import { CustomSelect } from "@/shared/components/ui/CustomSelect";
-import { IOption } from "@/shared/components/ui/CustomSelect/select.types";
 import { Input } from "@/shared/components/ui/Input";
 import { ErrorMessage } from "@hookform/error-message";
-import { FC } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { ComponentProps, FC } from "react";
+import { useFormContext } from "react-hook-form";
 
 type Props = {
   name: string;
@@ -12,30 +10,30 @@ type Props = {
   border?: boolean;
   isLoading?: boolean;
   label?: string;
-  placeholder?: string;
-  disable?: boolean;
-  classname?: string;
-};
+} & ComponentProps<"input">;
 
 export const FormInput: FC<Props> = ({
   name,
-  classname,
+  className,
   border,
   placeholder = "Введите",
+  ...props
 }) => {
   const {
     register,
+    getFieldState,
     formState: { errors },
   } = useFormContext();
-
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col w-full h-[70px]">
       <Input
-        {...register(name)}
-        className={classname}
+        error={getFieldState(name).invalid}
+        className={className}
         id={name}
         placeholder={placeholder}
         border={border}
+        {...register(name)}
+        {...props}
       />
       <ErrorMessage
         errors={errors}

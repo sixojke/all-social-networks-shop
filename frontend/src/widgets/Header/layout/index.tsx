@@ -7,13 +7,13 @@ import { AuthButton } from "@/features/Auth";
 export const HeaderLayout = () => {
   return (
     <header className="flex flex-col gap-y-8">
-      <section className="flex mt-8 px-10 gap-x-5">
+      <section className="flex px-10 gap-x-5 w-full fixed bg-main-white pt-8 z-50 pb-3">
         <Button className="bg-main-dark-blue">PShop</Button>
         <ButtonText className="text-main-dark-blue">Фильтр</ButtonText>
         <Input placeholder="Поиск" />
         <AuthButton />
       </section>
-      <section className="self-center">
+      <section className="self-center mt-32">
         <Nav />
       </section>
     </header>
