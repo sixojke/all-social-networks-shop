@@ -6,8 +6,16 @@ import { FiltersFormValues, filtersFormSchema } from "../../constants/filters";
 import { FormSelect } from "@/shared/components/common/Form/FormSelect";
 import { useGetAllCategoriesQuery } from "@/entities/categories";
 import { useGetAllSubcategoriesQuery } from "@/entities/subcategories";
+import { IGetAllProductsRequest } from "@/entities/products";
+import { FC, useEffect } from "react";
+import { IOption } from "@/shared/components/ui/CustomSelect/select.types";
+import { transformFormFiltersToRequest } from "../../helpers";
 
-export const Filters = () => {
+type Props = {
+  setFilters: (data: IGetAllProductsRequest) => void;
+};
+
+export const Filters: FC<Props> = ({ setFilters }) => {
   const formApi = useForm<FiltersFormValues>({
     mode: "onChange",
     defaultValues: {
@@ -18,7 +26,7 @@ export const Filters = () => {
     },
     resolver: yupResolver(filtersFormSchema),
   });
-  const { handleSubmit, watch, reset } = formApi;
+  const { handleSubmit, watch, reset, setValue } = formApi;
 
   const category = watch("category");
 
@@ -31,11 +39,18 @@ export const Filters = () => {
       { skip: !category?.id }
     );
 
+  useEffect(() => {
+    if (category === null) {
+      setValue("subcategory", null);
+    }
+  }, [category]);
+
   const onSubmit = (data: FiltersFormValues) => {
-    console.log(data);
+    setFilters(transformFormFiltersToRequest(data));
   };
 
   const formReset = () => {
+    setFilters({});
     reset();
   };
 
@@ -47,9 +62,10 @@ export const Filters = () => {
           className="flex justify-between pb-12 border-b-2 border-main-blue-gray mb-8 h-40"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <div className="flex gap-x-12">
+          <div className="flex gap-x-8">
             <FormSelect
               name="category"
+              isClearable
               width="w-[230px]"
               label="Категория"
               isLoading={categoriesIsLoading}
@@ -61,10 +77,11 @@ export const Filters = () => {
               }
             />
             <FormSelect
+              isClearable
               disable={!category?.id}
               placeholder={category?.id ? "Выберите" : "Выберите категорию"}
               name="subcategory"
-              width="w-[250px]"
+              width="w-[290px]"
               label="Подкатегория"
               isLoading={subcategoriesIsLoading}
               options={
@@ -75,19 +92,24 @@ export const Filters = () => {
               }
             />
             <FormSelect
+              isClearable
               name="sort"
               width="w-[230px]"
-              label="Сортировка товаров"
-              options={[]}
+              label="Сортировка товаров по цене"
+              options={[
+                { id: 1, name: "По возрастанию", filter: "asc" } as IOption,
+                { id: 2, name: "По убыванию", filter: "desc" } as IOption,
+              ]}
             />
             <FormSelect
+              isClearable
               name="supplier"
               width="w-[230px]"
               label="Выбор поставщика"
               options={[]}
             />
           </div>
-          <div className="self-center flex gap-x-8">
+          <div className="self-center flex gap-x-10">
             <Button className="bg-main-dark-blue" type="submit">
               Найти
             </Button>

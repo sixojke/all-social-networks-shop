@@ -1,14 +1,15 @@
 import { CustomSelect } from "@/shared/components/ui/CustomSelect";
 import { IOption } from "@/shared/components/ui/CustomSelect/select.types";
+import { Input } from "@/shared/components/ui/Input";
 import { ErrorMessage } from "@hookform/error-message";
 import { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 
 type Props = {
-  options: IOption[];
   name: string;
   width?: string;
   isClearable?: boolean;
+  border?: boolean;
   isLoading?: boolean;
   label?: string;
   placeholder?: string;
@@ -16,41 +17,25 @@ type Props = {
   classname?: string;
 };
 
-export const FormSelect: FC<Props> = ({
+export const FormInput: FC<Props> = ({
   name,
   classname,
-  disable,
-  label,
-  isLoading,
-  isClearable,
-  placeholder = "Выберите",
-  width,
-  options,
+  border,
+  placeholder = "Введите",
 }) => {
   const {
-    control,
+    register,
     formState: { errors },
   } = useFormContext();
 
   return (
     <div className="flex flex-col">
-      <Controller
-        name={name}
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <CustomSelect
-            isClearable={isClearable}
-            isLoading={isLoading}
-            options={options}
-            placeholder={placeholder}
-            width={width}
-            isDisabled={disable}
-            label={label}
-            className={classname}
-            onChange={onChange}
-            value={value}
-          />
-        )}
+      <Input
+        {...register(name)}
+        className={classname}
+        id={name}
+        placeholder={placeholder}
+        border={border}
       />
       <ErrorMessage
         errors={errors}

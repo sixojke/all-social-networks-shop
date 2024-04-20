@@ -8,7 +8,6 @@ type Props = {
 export const Input: FC<Props> = ({
   placeholder = "Введите",
   className,
-  children,
   border,
   ...props
 }) => {

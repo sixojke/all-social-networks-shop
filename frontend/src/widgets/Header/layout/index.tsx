@@ -2,6 +2,7 @@ import { Button } from "@/shared/components/ui/Buttons/Button";
 import { ButtonText } from "@/shared/components/ui/Buttons/ButtonText";
 import { Input } from "@/shared/components/ui/Input";
 import { Nav } from "../components/Nav";
+import { AuthButton } from "@/features/Auth";
 
 export const HeaderLayout = () => {
   return (
@@ -10,7 +11,7 @@ export const HeaderLayout = () => {
         <Button className="bg-main-dark-blue">PShop</Button>
         <ButtonText className="text-main-dark-blue">Фильтр</ButtonText>
         <Input placeholder="Поиск" />
-        <Button className="bg-main-dark-blue">Войти</Button>
+        <AuthButton />
       </section>
       <section className="self-center">
         <Nav />
