@@ -17,3 +17,16 @@ export const optionValidationRequired = yup
   .required()
   .nullable()
   .test("nullable", "Выберите", (value) => value !== null);
+
+export const emailValidationRequired = yup
+  .string()
+  .email("Значение “Email” не является правильным email адресом.")
+  .required("Заполните поле")
+  .nullable()
+  .test("nullable", "Заполните поле", (value) => value !== null);
+
+export const stringValidationRequired = yup
+  .string()
+  .required("Заполните поле")
+  .nullable()
+  .test("nullable", "Заполните поле", (value) => value !== null);

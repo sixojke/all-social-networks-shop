@@ -8,6 +8,7 @@ type Props = {
   options: IOption[];
   name: string;
   width?: string;
+  isClearable?: boolean;
   isLoading?: boolean;
   label?: string;
   placeholder?: string;
@@ -21,6 +22,7 @@ export const FormSelect: FC<Props> = ({
   disable,
   label,
   isLoading,
+  isClearable,
   placeholder = "Выберите",
   width,
   options,
@@ -37,6 +39,7 @@ export const FormSelect: FC<Props> = ({
         control={control}
         render={({ field: { onChange, value } }) => (
           <CustomSelect
+            isClearable={isClearable}
             isLoading={isLoading}
             options={options}
             placeholder={placeholder}

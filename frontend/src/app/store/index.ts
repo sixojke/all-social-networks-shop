@@ -19,3 +19,5 @@ export const store = configureStore({
       },
     }).concat(rootApi.middleware),
 });
+
+export type RootState = ReturnType<typeof rootReducer>;

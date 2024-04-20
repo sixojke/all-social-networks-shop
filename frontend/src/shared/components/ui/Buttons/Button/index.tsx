@@ -28,7 +28,7 @@ export const Button: FC<Props> = ({
         "select-none",
         {
           ["active:brightness-125"]: !disabled,
-          ["hover:brightness-110"]: !disabled,
+          ["hover:bg-main-blue-gray"]: !disabled,
           ["border-solid border-main-blue border-2"]: border,
           ["border-none"]: !border,
         },
