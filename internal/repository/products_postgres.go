@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/sirupsen/logrus"
 	"github.com/sixojke/internal/domain"
 )
 
@@ -83,7 +84,7 @@ func (r *ProductsPostgres) GetAll(filters *domain.ProductFilters) (*domain.Pagin
 	} else if filters.SortDefect == "desc" {
 		query += "ORDER BY products.price DESC "
 	} else {
-		query += "ORDER BY products.quantity_sales "
+		query += "ORDER BY products.id "
 	}
 
 	pagination := make([]string, 0)
@@ -94,6 +95,7 @@ func (r *ProductsPostgres) GetAll(filters *domain.ProductFilters) (*domain.Pagin
 
 	pagination = append(pagination, fmt.Sprintf("OFFSET $%v", argsId))
 	args = append(args, filters.Offset)
+	argsId++
 
 	query += strings.Join(pagination, " ")
 
@@ -105,6 +107,7 @@ func (r *ProductsPostgres) GetAll(filters *domain.ProductFilters) (*domain.Pagin
 
 		return nil, fmt.Errorf("get all products: %v", err)
 	}
+	logrus.Info(query, args)
 
 	query = fmt.Sprintf(`
 	SELECT COUNT(*)
@@ -119,11 +122,18 @@ func (r *ProductsPostgres) GetAll(filters *domain.ProductFilters) (*domain.Pagin
 		return nil, fmt.Errorf("error select count rows: %v", err)
 	}
 
+	totalPages := 0
+	if rows%filters.Limit == 0 {
+		totalPages = rows / filters.Limit
+	} else {
+		totalPages = rows/filters.Limit + 1
+	}
+
 	return &domain.Pagination{
-		Data:   p,
-		Total:  rows,
-		Limit:  filters.Limit,
-		Offset: filters.Offset,
+		Data:       p,
+		TotalItems: rows,
+		Limit:      filters.Limit,
+		TotalPages: totalPages,
 	}, nil
 }
 

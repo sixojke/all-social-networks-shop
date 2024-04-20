@@ -143,8 +143,8 @@ const docTemplate = `{
                     {
                         "type": "integer",
                         "default": 0,
-                        "description": "Offset for pagination",
-                        "name": "offset",
+                        "description": "Page number",
+                        "name": "page",
                         "in": "query"
                     },
                     {
@@ -471,10 +471,10 @@ const docTemplate = `{
                 "limit": {
                     "type": "integer"
                 },
-                "offset": {
+                "total_items": {
                     "type": "integer"
                 },
-                "total": {
+                "total_pages": {
                     "type": "integer"
                 }
             }
