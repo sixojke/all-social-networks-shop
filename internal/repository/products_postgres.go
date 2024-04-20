@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/sirupsen/logrus"
 	"github.com/sixojke/internal/domain"
 )
 
@@ -97,8 +96,6 @@ func (r *ProductsPostgres) GetAll(filters *domain.ProductFilters) (*domain.Pagin
 	args = append(args, filters.Offset)
 
 	query += strings.Join(pagination, " ")
-	logrus.Info(query)
-	logrus.Info(args...)
 
 	var p []domain.Product
 	if err := r.db.Select(&p, query, args...); err != nil {
