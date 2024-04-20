@@ -12,7 +12,7 @@ export const getSelectStyles = <
     control: (baseStyles) => ({
       ...baseStyles,
       minHeight: 34,
-      padding: "0 6px",
+      padding: "5px 10px",
       caretColor: "#3485FE",
       border: "none",
       borderRadius: "10px",
