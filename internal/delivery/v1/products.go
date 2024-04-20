@@ -215,7 +215,7 @@ func (h *Handler) productsGetAll(c *gin.Context) {
 // @Failure default {object} response
 // @Router /categories [get]
 func (h *Handler) categoriesAll(c *gin.Context) {
-	categories, err := h.services.Products.GetCategories()
+	categories, err := h.services.Category.GetCategories()
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
@@ -248,7 +248,7 @@ func (h *Handler) subcategoriesById(c *gin.Context) {
 		return
 	}
 
-	subcategories, err := h.services.Products.GetSubcategories(categoryId)
+	subcategories, err := h.services.Category.GetSubcategories(categoryId)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 

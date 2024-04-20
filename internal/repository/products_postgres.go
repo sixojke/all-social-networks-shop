@@ -158,38 +158,3 @@ func (r *ProductsPostgres) GetAll(filters *domain.ProductFilters) (*domain.Pagin
 // func (r *ProductsPostgres) Update(product *domain.Product) (*domain.Product, error) {
 
 // }
-
-func (r *ProductsPostgres) GetCategories() (*[]domain.Category, error) {
-	query := fmt.Sprintf(`
-	SELECT *
-	FROM %s`, category)
-
-	var categories []domain.Category
-	if err := r.db.Select(&categories, query); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil
-		}
-
-		return nil, fmt.Errorf("error select categoryies: %v", err)
-	}
-
-	return &categories, nil
-}
-
-func (r *ProductsPostgres) GetSubcategories(categoryId int) (*[]domain.Subcategory, error) {
-	query := fmt.Sprintf(`
-	SELECT *
-	FROM %s
-	WHERE category_id = $1`, subcategory)
-
-	var subcategories []domain.Subcategory
-	if err := r.db.Select(&subcategories, query, categoryId); err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil
-		}
-
-		return nil, fmt.Errorf("error select subcategoryies: %v", err)
-	}
-
-	return &subcategories, nil
-}

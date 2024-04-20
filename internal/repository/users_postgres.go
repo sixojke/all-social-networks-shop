@@ -78,7 +78,7 @@ func (r *UsersPostgres) Create(user *domain.User, code string) (int, error) {
 func (r *UsersPostgres) GetByCredentials(username, password string) (*domain.User, error) {
 	query := fmt.Sprintf(`
 	SELECT 
-		id, username, email, balance
+		id, username, email, balance, role
 	FROM %s 
 	WHERE username = $1 AND password = $2`, users)
 
@@ -111,9 +111,10 @@ func (r *UsersPostgres) GetByCredentials(username, password string) (*domain.Use
 func (r *UsersPostgres) GetByRefreshToken(refreshToken string) (*domain.Session, error) {
 	query := fmt.Sprintf(`
 	SELECT
-		user_id
+		sessions.user_id, users.role
 	FROM %s
-	WHERE refresh_token = $1 AND expires_at > NOW()`, sessions)
+	INNER JOIN %s ON sessions.user_id = users.id
+	WHERE refresh_token = $1 AND expires_at > NOW()`, sessions, users)
 
 	var session domain.Session
 	if err := r.db.Get(&session, query, refreshToken); err != nil {

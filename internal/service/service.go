@@ -34,14 +34,18 @@ type Users interface {
 	Verify(userId int, code string) error
 }
 
+type Category interface {
+	CreateCategory(category *domain.Category) (id int, err error)
+	GetCategories() (*[]domain.Category, error)
+	GetSubcategories(categoryId int) (*[]domain.Subcategory, error)
+}
+
 type Products interface {
 	// Create(product *domain.Product) (int, error)
 	GetAll(filters *domain.ProductFilters) (*domain.Pagination, error)
 	// GetById(id int) (*domain.Product, error)
 	// GetBySubcategoryId(id int) (*[]domain.Product, error)
 	// Update(product *domain.Product) (*domain.Product, error)
-	GetCategories() (*[]domain.Category, error)
-	GetSubcategories(categoryId int) (*[]domain.Subcategory, error)
 }
 
 type Deps struct {
@@ -56,6 +60,7 @@ type Deps struct {
 
 type Service struct {
 	Users    Users
+	Category Category
 	Products Products
 }
 
@@ -64,6 +69,7 @@ func NewService(deps *Deps) *Service {
 
 	return &Service{
 		Users:    NewUsersService(deps.Repo.Users, deps.Config.Users, deps.TokenManager, deps.Hasher, deps.OtpGenerator, emailService),
+		Category: NewCategoryService(deps.Repo.Category),
 		Products: NewProductsService(deps.Repo.Products),
 	}
 }

@@ -4,6 +4,7 @@ CREATE TABLE users(
     password VARCHAR(256),
     email VARCHAR(255) UNIQUE,
     balance NUMERIC(10, 2),
+    role VARCHAR(32) DEFAULT 'user',
     last_visit_at TIMESTAMP NOT NULL,
     registered_at TIMESTAMP DEFAULT now()
 );

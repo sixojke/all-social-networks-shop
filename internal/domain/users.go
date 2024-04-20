@@ -8,6 +8,7 @@ type User struct {
 	Password     string    `db:"password"`
 	Email        string    `json:"email" db:"email"`
 	Balance      float64   `json:"balance" db:"balance"`
+	Role         string    `json:"role" db:"role"`
 	LastVisitAt  time.Time `json:"last_visit_at" db:"last_visit_at"`
 	RegisteredAt time.Time `json:"registered_at" db:"registered_at"`
 }
@@ -16,6 +17,7 @@ type Session struct {
 	RefreshToken string    `json:"refresh_token" db:"refresh_token"`
 	ExpiresAt    time.Time `json:"expires_at" db:"expires_at"`
 	UserId       int       `json:"user_id" db:"user_id"`
+	UserRole     string    `json:"user_role" db:"role"`
 }
 
 type Supplier struct {

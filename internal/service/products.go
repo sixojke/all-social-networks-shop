@@ -69,21 +69,3 @@ func (s *ProductsService) GetAll(filters *domain.ProductFilters) (*domain.Pagina
 
 // 	return product, nil
 // }
-
-func (s *ProductsService) GetCategories() (*[]domain.Category, error) {
-	categories, err := s.repo.GetCategories()
-	if err != nil {
-		return nil, fmt.Errorf("errors products service GetCategories: %v", err)
-	}
-
-	return categories, nil
-}
-
-func (s *ProductsService) GetSubcategories(categoryId int) (*[]domain.Subcategory, error) {
-	subcategories, err := s.repo.GetSubcategories(categoryId)
-	if err != nil {
-		return nil, fmt.Errorf("errors products service GetCategories: %v", err)
-	}
-
-	return subcategories, nil
-}

@@ -12,19 +12,42 @@ import (
 const (
 	authHeader = "Authorization"
 
-	userCtx = "userId"
+	userIdCtx   = "userId"
+	userRoleCtx = "userRole"
 )
 
-func (h *Handler) userIdentity(c *gin.Context) {
-	id, err := h.parseAuthHeader(c)
-	if err != nil {
-		newResponse(c, http.StatusUnauthorized, err.Error())
+func (h Handler) adminIdentity(c *gin.Context) {
+	h.userIdentity(c)
+
+	role, ok := c.Get(userRoleCtx)
+	if !ok {
+		newResponse(c, http.StatusUnauthorized, "user unauthorized")
+
+		return
 	}
 
-	c.Set(userCtx, id)
+	if role != "admin" {
+		newResponse(c, http.StatusForbidden, "forbidden")
+
+		return
+	}
 }
 
-func (h *Handler) parseAuthHeader(c *gin.Context) (id string, err error) {
+func (h *Handler) userIdentity(c *gin.Context) {
+	sub, err := h.parseAuthHeader(c)
+	if err != nil {
+		newResponse(c, http.StatusUnauthorized, err.Error())
+
+		return
+	}
+
+	user := strings.Split(sub, "/")
+
+	c.Set(userIdCtx, user[0])
+	c.Set(userRoleCtx, user[1])
+}
+
+func (h *Handler) parseAuthHeader(c *gin.Context) (sub string, err error) {
 	header := c.GetHeader(authHeader)
 	if header == "" {
 		return "", errors.New("empty auth header")
@@ -43,7 +66,11 @@ func (h *Handler) parseAuthHeader(c *gin.Context) (id string, err error) {
 }
 
 func getUserId(c *gin.Context) (int, error) {
-	return getIdByContext(c, userCtx)
+	return getIdByContext(c, userIdCtx)
+}
+
+func getUserRole(c *gin.Context) (string, error) {
+	return getRoleByConetxt(c, userRoleCtx)
 }
 
 func getIdByContext(c *gin.Context, context string) (int, error) {
@@ -63,4 +90,18 @@ func getIdByContext(c *gin.Context, context string) (int, error) {
 	}
 
 	return id, nil
+}
+
+func getRoleByConetxt(c *gin.Context, context string) (string, error) {
+	roleFromCtx, ok := c.Get(context)
+	if !ok {
+		return "", errors.New("context not found")
+	}
+
+	roleStr, ok := roleFromCtx.(string)
+	if !ok {
+		return "", errors.New("invalid type")
+	}
+
+	return roleStr, nil
 }

@@ -76,7 +76,7 @@ func (s *UsersService) SignIn(inp UserSignInInp) (Tokens, error) {
 		return Tokens{}, err
 	}
 
-	return s.createSession(user.Id)
+	return s.createSession(user.Id, user.Role)
 }
 
 func (s *UsersService) RefreshTokens(refreshToken string) (Tokens, error) {
@@ -85,7 +85,7 @@ func (s *UsersService) RefreshTokens(refreshToken string) (Tokens, error) {
 		return Tokens{}, err
 	}
 
-	return s.createSession(session.UserId)
+	return s.createSession(session.UserId, session.UserRole)
 }
 
 func (s *UsersService) Verify(userId int, code string) error {
@@ -97,13 +97,13 @@ func (s *UsersService) Verify(userId int, code string) error {
 	return nil
 }
 
-func (s *UsersService) createSession(userId int) (Tokens, error) {
+func (s *UsersService) createSession(userId int, userRole string) (Tokens, error) {
 	var (
 		tokens Tokens
 		err    error
 	)
 
-	tokens.AccessToken, err = s.tokenManager.NewJWT(strconv.Itoa(userId), s.config.Auth.JWT.AccessTokenTTL)
+	tokens.AccessToken, err = s.tokenManager.NewJWT(strconv.Itoa(userId), userRole, s.config.Auth.JWT.AccessTokenTTL)
 	if err != nil {
 		return tokens, err
 	}
