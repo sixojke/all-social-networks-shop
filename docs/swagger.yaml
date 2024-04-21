@@ -434,8 +434,6 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/v1.response'
-      security:
-      - UsersAuth: []
       summary: User Verify Registration
       tags:
       - users-auth

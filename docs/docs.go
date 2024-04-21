@@ -459,11 +459,6 @@ const docTemplate = `{
         },
         "/users/verify/": {
             "post": {
-                "security": [
-                    {
-                        "UsersAuth": []
-                    }
-                ],
                 "description": "user verify registration",
                 "consumes": [
                     "application/json"
