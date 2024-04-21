@@ -10,20 +10,20 @@ import { Pagination } from "@/shared/components/ui/Pagination";
 
 export const CatalogPageLayout = () => {
   const [filters, setFilters] = useState<IGetAllProductsRequest>({});
-  const [offset, setOffset] = useState<number>(11);
+  const [page, setPage] = useState<number>(1);
   const { data, isLoading, isError } = useGetAllProductsQuery({
     ...filters,
-    offset,
+    page,
   });
 
   const onPageChange = (page: number) => {
-    setOffset(page + 1);
+    setPage(page + 1);
   };
 
   return (
     <>
       <main className="px-64 mt-10">
-        <Filters setOffset={setOffset} setFilters={setFilters} />
+        <Filters setOffset={setPage} setFilters={setFilters} />
         <QueryHandler
           isError={isError}
           isLoading={isLoading}
@@ -35,11 +35,11 @@ export const CatalogPageLayout = () => {
           </div>
         )}
         <ProductsList products={data?.Pagination.data ?? []} />
-        {!!data?.Pagination && !!data?.Pagination.total && (
+        {!!data?.Pagination && !!data?.Pagination.total_pages && (
           <div className="mt-10 mb-20">
             <Pagination
-              countPage={data.Pagination.total}
-              currentPage={offset - 10}
+              countPage={data.Pagination.total_pages - 1}
+              currentPage={page}
               onChange={onPageChange}
             />
           </div>
