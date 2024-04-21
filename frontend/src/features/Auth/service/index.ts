@@ -3,6 +3,7 @@ import {
   CheckTokenRequest,
   CheckTokenResponse,
   SignInRequest,
+  SignInResponse,
   SignUpRequest,
   SignUpResponse,
   SignUpVerifyRequest,
@@ -36,7 +37,7 @@ export const authApi = createApi({
       }),
       invalidatesTags: ["auth"],
     }),
-    signIn: build.mutation<void, SignInRequest>({
+    signIn: build.mutation<SignInResponse, SignInRequest>({
       query: (data) => ({ url: "sign-in", method: "POST", body: data }),
       invalidatesTags: ["auth"],
     }),

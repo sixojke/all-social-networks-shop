@@ -13,6 +13,11 @@ export interface SignUpVerifyRequest {
   id: number;
 }
 
+export interface SignInResponse {
+  accessToken: string;
+  refreshToken: string;
+}
+
 export interface SignInRequest {
   password: string;
   username: string;

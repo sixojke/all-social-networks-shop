@@ -38,7 +38,7 @@ export const VerifyContent: FC<Props> = ({ userId }) => {
     <FormProvider {...formApi}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="w-full flex flex-col gap-y-5 items-center justify-center">
-          <FormInput max={6} placeholder="КОД" name="code" />
+          <FormInput border max={6} placeholder="КОД" name="code" />
           <Button type="submit" className="bg-main-dark-blue">
             Подтвердить
           </Button>

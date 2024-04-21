@@ -10,6 +10,7 @@ import {
 } from "redux-persist";
 import { rootReducer } from "./rootReducer";
 import { authApi } from "@/features/Auth";
+import { protectedApi } from "@/shared/api/protected";
 
 export const store = configureStore({
   reducer: rootReducer,
@@ -18,7 +19,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(rootApi.middleware, authApi.middleware),
+    }).concat(rootApi.middleware, authApi.middleware, protectedApi.middleware),
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

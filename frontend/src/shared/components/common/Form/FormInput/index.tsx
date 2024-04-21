@@ -10,6 +10,7 @@ type Props = {
   border?: boolean;
   isLoading?: boolean;
   label?: string;
+  seachIcon?: boolean;
 } & ComponentProps<"input">;
 
 export const FormInput: FC<Props> = ({

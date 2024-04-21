@@ -9,8 +9,11 @@ import { FormProvider, useForm } from "react-hook-form";
 import { useSignInMutation } from "../../service";
 import { useContext } from "react";
 import { ModalContext } from "@/shared/contexts/Modal";
+import { SignInResponse } from "../../types";
+import { useRouter } from "next/navigation";
 
 export const SignInContent = () => {
+  const router = useRouter();
   const modalContext = useContext(ModalContext);
   const onHide = () => {
     modalContext?.hideModal();
@@ -33,17 +36,25 @@ export const SignInContent = () => {
       username: data.login as string,
     })
       .unwrap()
-      .then(() => {
+      .then((res: SignInResponse) => {
+        localStorage.setItem("accessToken", res.accessToken);
+        localStorage.setItem("refreshToken", res.refreshToken);
         onHide();
+        router.refresh();
       });
   };
   return (
     <FormProvider {...formApi}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="w-full flex flex-col gap-y-5 items-center justify-center">
-          <FormInput placeholder="Логин" name="login" />
-          <FormInput placeholder="Пароль" name="password" type="password" />
-          <Button type="submit" className="w-32">
+          <FormInput border placeholder="Логин" name="login" />
+          <FormInput
+            border
+            placeholder="Пароль"
+            name="password"
+            type="password"
+          />
+          <Button type="submit" className="w-32 bg-main-dark-blue">
             Войти
           </Button>
         </div>
