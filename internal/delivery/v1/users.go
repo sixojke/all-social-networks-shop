@@ -19,7 +19,7 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 
 		authenticated := users.Group("/", h.userIdentity)
 		{
-			_ = authenticated
+			authenticated.GET("test", h.test)
 		}
 	}
 }
@@ -71,7 +71,7 @@ func (h *Handler) userSignUp(c *gin.Context) {
 }
 
 type userSignInInp struct {
-	Username string `json:"username" binding:"required,min=8,max=32"`
+	Username string `json:"username" binding:"required,min=6,max=32"`
 	Password string `json:"password" binding:"required,min=8,max=64"`
 }
 
@@ -203,4 +203,15 @@ func (h *Handler) userVerify(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response{"success"})
+}
+
+func (h *Handler) test(c *gin.Context) {
+	id, err := getIdByContext(c, userIdCtx)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, idResponse{ID: id})
 }

@@ -31,6 +31,31 @@ func (r *CategoryPostgres) CreateCategory(cat *domain.Category) (id int, err err
 	return
 }
 
+func (r *CategoryPostgres) CategoryEdit(cat *domain.Category) error {
+	query := fmt.Sprintf(`
+	UPDATE %s
+	SET name = $1`, category)
+
+	argsId := 2
+	args := make([]interface{}, 0)
+	args = append(args, cat.Name)
+
+	if cat.ImgPath != "" {
+		query += fmt.Sprintf(", img_path = $%v", argsId)
+		args = append(args, cat.ImgPath)
+		argsId++
+	}
+
+	query += fmt.Sprintf(" WHERE id = $%v", argsId)
+	args = append(args, cat.Id)
+
+	if _, err := r.db.Exec(query, args...); err != nil {
+		return fmt.Errorf("update category: %v", err)
+	}
+
+	return nil
+}
+
 func (r *CategoryPostgres) GetCategories() (*[]domain.Category, error) {
 	query := fmt.Sprintf(`
 	SELECT *

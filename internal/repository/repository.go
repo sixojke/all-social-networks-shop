@@ -16,6 +16,7 @@ type Users interface {
 
 type Category interface {
 	CreateCategory(cat *domain.Category) (id int, err error)
+	CategoryEdit(cat *domain.Category) error
 	GetCategories() (*[]domain.Category, error)
 	GetSubcategories(categoryId int) (*[]domain.Subcategory, error)
 }
