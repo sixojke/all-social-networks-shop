@@ -10,6 +10,8 @@ import { IGetAllProductsRequest } from "@/entities/products";
 import { FC, useEffect } from "react";
 import { IOption } from "@/shared/components/ui/CustomSelect/select.types";
 import { transformFormFiltersToRequest } from "../../helpers";
+import searchIcon from "@/assets/icons/search.svg";
+import Image from "next/image";
 
 type Props = {
   setFilters: (data: IGetAllProductsRequest) => void;
@@ -48,6 +50,15 @@ export const Filters: FC<Props> = ({ setFilters, setOffset }) => {
     setOffset(1);
     setFilters(transformFormFiltersToRequest(data));
   };
+
+  useEffect(() => {
+    setTimeout(() => {
+      const subscription = formApi.watch(() =>
+        formApi.handleSubmit(onSubmit)()
+      );
+      return () => subscription.unsubscribe();
+    }, 300);
+  }, [formApi.handleSubmit, formApi.watch]);
 
   const formReset = () => {
     setOffset(1);
@@ -112,7 +123,10 @@ export const Filters: FC<Props> = ({ setFilters, setOffset }) => {
           </div>
           <div className="self-center flex gap-x-10">
             <Button className="bg-main-dark-blue" type="submit">
-              Найти
+              <div className="flex items-center gap-x-2">
+                <Image src={searchIcon} height={15} width={15} alt="" />
+                Поиск
+              </div>
             </Button>
             <Button
               type="button"

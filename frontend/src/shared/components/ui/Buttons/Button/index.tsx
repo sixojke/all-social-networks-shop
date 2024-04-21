@@ -29,7 +29,7 @@ export const Button: FC<Props> = ({
         {
           ["active:brightness-125"]: !disabled,
           ["hover:bg-main-blue-gray"]: !disabled,
-          ["border-solid border-main-blue border-2"]: border,
+          ["border-solid border-main-blue border-[1px]"]: border,
           ["border-none"]: !border,
         },
         className

@@ -46,9 +46,14 @@ export const SignUpContent: FC<Props> = ({ setContentType, setUserId }) => {
     <FormProvider {...formApi}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="w-full flex flex-col gap-y-5 items-center justify-center">
-          <FormInput placeholder="Логин" name="login" />
-          <FormInput placeholder="Email" name="email" type="email" />
-          <FormInput placeholder="Пароль" name="password" type="password" />
+          <FormInput border placeholder="Логин" name="login" />
+          <FormInput border placeholder="Email" name="email" type="email" />
+          <FormInput
+            border
+            placeholder="Пароль"
+            name="password"
+            type="password"
+          />
           <Button type="submit" className="w-32 bg-main-dark-blue">
             Создать
           </Button>

@@ -10,7 +10,12 @@ export const HeaderLayout = () => {
       <section className="flex px-10 gap-x-5 w-full fixed bg-main-white pt-8 z-50 pb-3">
         <Button className="bg-main-dark-blue">PShop</Button>
         <ButtonText className="text-main-dark-blue">Фильтр</ButtonText>
-        <Input placeholder="Поиск" />
+        <Input
+          rounded="46px"
+          className="!bg-main-light-blue !placeholder-main-light-gray"
+          searchIcon
+          placeholder="Поиск"
+        />
         <AuthButton />
       </section>
       <section className="self-center mt-32">
