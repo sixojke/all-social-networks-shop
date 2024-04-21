@@ -3,14 +3,14 @@ package domain
 import "time"
 
 type User struct {
-	Id           int       `json:"id" db:"id"`
-	Username     string    `json:"username" db:"username"`
-	Password     string    `db:"password"`
-	Email        string    `json:"email" db:"email"`
-	Balance      float64   `json:"balance" db:"balance"`
-	Role         string    `json:"role" db:"role"`
-	LastVisitAt  time.Time `json:"last_visit_at" db:"last_visit_at"`
-	RegisteredAt time.Time `json:"registered_at" db:"registered_at"`
+	Id           int       `json:"id,omitempty" db:"id"`
+	Username     string    `json:"username,omitempty" db:"username"`
+	Password     string    `json:"password,omitempty" db:"password"`
+	Email        string    `json:"email,omitempty" db:"email"`
+	Balance      float64   `json:"balance,omitempty" db:"balance"`
+	Role         string    `json:"role,omitempty" db:"role"`
+	LastVisitAt  time.Time `json:"last_visit_at,omitempty" db:"last_visit_at"`
+	RegisteredAt time.Time `json:"registered_at,omitempty" db:"registered_at"`
 }
 
 type Session struct {

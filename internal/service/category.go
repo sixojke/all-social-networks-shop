@@ -32,6 +32,14 @@ func (s *CategoryService) UpdateCategory(category *domain.Category) error {
 	return nil
 }
 
+func (s *CategoryService) DeleteCategory(id int) error {
+	if err := s.repo.DeleteCategory(id); err != nil {
+		return fmt.Errorf("error category service DeleteCategory: %v", err)
+	}
+
+	return nil
+}
+
 func (s *CategoryService) GetCategories() (*[]domain.Category, error) {
 	categories, err := s.repo.GetCategories()
 	if err != nil {

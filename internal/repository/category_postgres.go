@@ -56,6 +56,19 @@ func (r *CategoryPostgres) CategoryEdit(cat *domain.Category) error {
 	return nil
 }
 
+func (r *CategoryPostgres) DeleteCategory(id int) error {
+	query := fmt.Sprintf(`
+	DELETE 
+	FROM %s
+	WHERE id = $1`, category)
+
+	if _, err := r.db.Exec(query, id); err != nil {
+		return fmt.Errorf("delete category: %v", err)
+	}
+
+	return nil
+}
+
 func (r *CategoryPostgres) GetCategories() (*[]domain.Category, error) {
 	query := fmt.Sprintf(`
 	SELECT *

@@ -164,3 +164,22 @@ func (r *UsersPostgres) SetSession(session *domain.Session) error {
 
 	return nil
 }
+
+func (r *UsersPostgres) GetById(id int) (*domain.User, error) {
+	query := fmt.Sprintf(`
+	SELECT 
+		id, username, role, balance, email
+	FROM %s
+	WHERE id = $1`, users)
+
+	var user domain.User
+	if err := r.db.Get(&user, query, id); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, domain.ErrUserNotFound
+		}
+
+		return nil, fmt.Errorf("get user by id: %v", err)
+	}
+
+	return &user, nil
+}

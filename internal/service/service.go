@@ -32,11 +32,13 @@ type Users interface {
 	SignIn(inp UserSignInInp) (Tokens, error)
 	RefreshTokens(refreshToken string) (Tokens, error)
 	Verify(userId int, code string) error
+	GetById(id int) (*domain.User, error)
 }
 
 type Category interface {
 	CreateCategory(category *domain.Category) (id int, err error)
 	UpdateCategory(category *domain.Category) error
+	DeleteCategory(id int) error
 	GetCategories() (*[]domain.Category, error)
 	GetSubcategories(categoryId int) (*[]domain.Subcategory, error)
 }

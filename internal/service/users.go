@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
@@ -124,4 +125,13 @@ func (s *UsersService) createSession(userId int, userRole string) (Tokens, error
 	}
 
 	return tokens, nil
+}
+
+func (s *UsersService) GetById(id int) (*domain.User, error) {
+	user, err := s.repo.GetById(id)
+	if err != nil {
+		return nil, fmt.Errorf("error users service UserByRefreshToken: %v", err)
+	}
+
+	return user, nil
 }

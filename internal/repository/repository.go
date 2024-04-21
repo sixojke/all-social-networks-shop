@@ -12,11 +12,13 @@ type Users interface {
 	GetByRefreshToken(refreshToken string) (*domain.Session, error)
 	Verify(userId int, code string) error
 	SetSession(session *domain.Session) error
+	GetById(id int) (*domain.User, error)
 }
 
 type Category interface {
 	CreateCategory(cat *domain.Category) (id int, err error)
 	CategoryEdit(cat *domain.Category) error
+	DeleteCategory(id int) error
 	GetCategories() (*[]domain.Category, error)
 	GetSubcategories(categoryId int) (*[]domain.Subcategory, error)
 }

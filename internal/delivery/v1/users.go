@@ -19,7 +19,7 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 
 		authenticated := users.Group("/", h.userIdentity)
 		{
-			authenticated.GET("test", h.test)
+			authenticated.GET("", h.userById)
 		}
 	}
 }
@@ -171,7 +171,6 @@ type UserVerifyInp struct {
 }
 
 // @Summary User Verify Registration
-// @Security UsersAuth
 // @Tags users-auth
 // @Description user verify registration
 // @ModuleID userVerify
@@ -205,13 +204,38 @@ func (h *Handler) userVerify(c *gin.Context) {
 	c.JSON(http.StatusOK, response{"success"})
 }
 
-func (h *Handler) test(c *gin.Context) {
-	id, err := getIdByContext(c, userIdCtx)
+// @Summary User get by refresh token
+// @Security UsersAuth
+// @Tags users
+// @Description user get by refresh token
+// @ModuleID userGetByRefresh
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} domain.User
+// @Failure 400,401,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/ [get]
+func (h *Handler) userById(c *gin.Context) {
+	id, err := getUserId(c)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return
 	}
 
-	c.JSON(http.StatusOK, idResponse{ID: id})
+	user, err := h.services.Users.GetById(id)
+	if err != nil {
+		if errors.Is(err, domain.ErrUserNotFound) {
+			newResponse(c, http.StatusUnauthorized, err.Error())
+
+			return
+		}
+
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
 }

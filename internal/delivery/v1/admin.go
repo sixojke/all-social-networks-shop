@@ -15,7 +15,7 @@ func (h *Handler) initAdminRouter(api *gin.RouterGroup) {
 		{
 			category.POST("/create", h.categoryCreate)
 			category.PATCH("/edit", h.categoryEdit)
-			category.DELETE("/delete", h.categoryDelete)
+			category.DELETE("/delete/:id", h.categoryDelete)
 		}
 	}
 }
@@ -122,5 +122,18 @@ func (h *Handler) categoryEdit(c *gin.Context) {
 }
 
 func (h *Handler) categoryDelete(c *gin.Context) {
+	id, err := processIntParam(c.Param("id"))
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
 
+		return
+	}
+
+	if err := h.services.Category.DeleteCategory(id); err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, response{"success"})
 }

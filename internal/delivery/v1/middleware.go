@@ -53,7 +53,7 @@ func (h *Handler) parseAuthHeader(c *gin.Context) (sub string, err error) {
 		return "", errors.New("empty auth header")
 	}
 
-	headerParts := strings.Split(header, " ")
+	headerParts := strings.Split(header, "=")
 	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
 		return "", errors.New("invalid auth header")
 	}
