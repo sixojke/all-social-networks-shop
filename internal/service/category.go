@@ -25,7 +25,7 @@ func (s *CategoryService) CreateCategory(category *domain.Category) (id int, err
 }
 
 func (s *CategoryService) UpdateCategory(category *domain.Category) error {
-	if err := s.repo.CategoryEdit(category); err != nil {
+	if err := s.repo.UpdateCategory(category); err != nil {
 		return fmt.Errorf("error category service UpdateCategory: %v", err)
 	}
 
@@ -47,6 +47,31 @@ func (s *CategoryService) GetCategories() (*[]domain.Category, error) {
 	}
 
 	return categories, nil
+}
+
+func (s *CategoryService) CreateSubcategory(subcategory *domain.Subcategory) (id int, err error) {
+	id, err = s.repo.CreateSubcategory(subcategory)
+	if err != nil {
+		return 0, fmt.Errorf("error category service CreateSubcategory: %v", err)
+	}
+
+	return id, nil
+}
+
+func (s *CategoryService) UpdateSubcategory(subcategory *domain.Subcategory) error {
+	if err := s.repo.UpdateSubcategory(subcategory); err != nil {
+		return fmt.Errorf("error category service UpdateSubcategory: %v", err)
+	}
+
+	return nil
+}
+
+func (s *CategoryService) DeleteSubcategory(id int) error {
+	if err := s.repo.DeleteSubcategory(id); err != nil {
+		return fmt.Errorf("error category service DeleteSubcategory: %v", err)
+	}
+
+	return nil
 }
 
 func (s *CategoryService) GetSubcategories(categoryId int) (*[]domain.Subcategory, error) {

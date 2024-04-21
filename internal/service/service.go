@@ -40,6 +40,9 @@ type Category interface {
 	UpdateCategory(category *domain.Category) error
 	DeleteCategory(id int) error
 	GetCategories() (*[]domain.Category, error)
+	CreateSubcategory(subcategory *domain.Subcategory) (id int, err error)
+	UpdateSubcategory(subcategory *domain.Subcategory) error
+	DeleteSubcategory(id int) error
 	GetSubcategories(categoryId int) (*[]domain.Subcategory, error)
 }
 

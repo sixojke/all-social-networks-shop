@@ -1,30 +1,30 @@
 
 INSERT INTO category (name, img_path) VALUES ('Telegram', '/home/sixojke/Desktop/all-social-networks-shop/img/categories/telegram.png');
-INSERT INTO subcategory (name, hold_time, category_id) VALUES ('Аккаунты', 60, 1);
-INSERT INTO subcategory (name, hold_time, category_id) VALUES ('Каналы', 60, 1);
-INSERT INTO subcategory (name, hold_time, category_id) VALUES ('Чаты/Группы', 60, 1);
+INSERT INTO subcategory (name, min_hold_time, category_id) VALUES ('Аккаунты', 60, 1);
+INSERT INTO subcategory (name, min_hold_time, category_id) VALUES ('Каналы', 60, 1);
+INSERT INTO subcategory (name, min_hold_time, category_id) VALUES ('Чаты/Группы', 60, 1);
 
 
 INSERT INTO category (name, img_path) VALUES ('Instagram', '/home/sixojke/Desktop/all-social-networks-shop/img/categories/instagram.png');
-INSERT INTO subcategory (name, hold_time, category_id) VALUES ('Аккаунты', 60, 2);
-INSERT INTO subcategory (name, hold_time, category_id) VALUES ('Доп услуги (накрутка)', 60, 2);
+INSERT INTO subcategory (name, min_hold_time, category_id) VALUES ('Аккаунты', 60, 2);
+INSERT INTO subcategory (name, min_hold_time, category_id) VALUES ('Доп услуги (накрутка)', 60, 2);
 
 
 INSERT INTO category (name, img_path) VALUES ('Discord', '/home/sixojke/Desktop/all-social-networks-shop/img/categories/discord.png');
-INSERT INTO subcategory (name, hold_time, category_id) VALUES ('Аккаунты', 60, 3);
-INSERT INTO subcategory (name, hold_time, category_id) VALUES ('Каналы', 60, 3);
-INSERT INTO subcategory (name, hold_time, category_id) VALUES ('Доп услуги (накрутка)', 60, 3);
+INSERT INTO subcategory (name, min_hold_time, category_id) VALUES ('Аккаунты', 60, 3);
+INSERT INTO subcategory (name, min_hold_time, category_id) VALUES ('Каналы', 60, 3);
+INSERT INTO subcategory (name, min_hold_time, category_id) VALUES ('Доп услуги (накрутка)', 60, 3);
 
 
 INSERT INTO category (name, img_path) VALUES ('Twitter', '/home/sixojke/Desktop/all-social-networks-shop/img/categories/twitter.png');
-INSERT INTO subcategory (name, hold_time, category_id) VALUES ('Аккаунты', 60, 4);
-INSERT INTO subcategory (name, hold_time, category_id) VALUES ('Доп услуги (накрутка)', 60, 4);
+INSERT INTO subcategory (name, min_hold_time, category_id) VALUES ('Аккаунты', 60, 4);
+INSERT INTO subcategory (name, min_hold_time, category_id) VALUES ('Доп услуги (накрутка)', 60, 4);
 
 
 INSERT INTO category (name, img_path) VALUES ('Reddit', '/home/sixojke/Desktop/all-social-networks-shop/img/categories/reddit.png');
-INSERT INTO subcategory (name, hold_time, category_id) VALUES ('Аккаунты', 60, 5);
-INSERT INTO subcategory (name, hold_time, category_id) VALUES ('Сабреддиты', 60, 5);
-INSERT INTO subcategory (name, hold_time, category_id) VALUES ('Доп услуги (накрутка)', 60, 5);
+INSERT INTO subcategory (name, min_hold_time, category_id) VALUES ('Аккаунты', 60, 5);
+INSERT INTO subcategory (name, min_hold_time, category_id) VALUES ('Сабреддиты', 60, 5);
+INSERT INTO subcategory (name, min_hold_time, category_id) VALUES ('Доп услуги (накрутка)', 60, 5);
 
 
 INSERT INTO products (name, price, quantity, quantity_sales, description, category_id, subcategory_id) VALUES ('Telegram account', 97, 15000, 500, 'Хорошие аккаунты', 1, 1);

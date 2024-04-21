@@ -32,8 +32,8 @@ type Category struct {
 }
 
 type Subcategory struct {
-	Id         int    `json:"id" db:"id"`
-	Name       string `json:"name" db:"name"`
-	HoldTime   int    `json:"hold_time" db:"hold_time"`
-	CategoryId int    `json:"category_id" db:"category_id"`
+	Id          int    `json:"id" db:"id"`
+	Name        string `json:"name" db:"name"`
+	MinHoldTime int    `json:"min_hold_time" db:"min_hold_time"`
+	CategoryId  int    `json:"category_id" db:"category_id"`
 }

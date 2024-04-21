@@ -16,11 +16,11 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 		users.POST("/sign-in", h.userSignIn)
 		users.POST("/auth/refresh", h.userRefresh)
 		users.POST("/verify", h.userVerify)
+	}
 
-		authenticated := users.Group("/", h.userIdentity)
-		{
-			authenticated.GET("", h.userById)
-		}
+	user := api.Group("/user", h.userIdentity)
+	{
+		user.GET("", h.userById)
 	}
 }
 
@@ -165,7 +165,7 @@ func (h *Handler) userRefresh(c *gin.Context) {
 	})
 }
 
-type UserVerifyInp struct {
+type userVerifyInp struct {
 	Id   int    `binding:"required"`
 	Code string `binding:"required"`
 }
@@ -176,14 +176,14 @@ type UserVerifyInp struct {
 // @ModuleID userVerify
 // @Accept  json
 // @Produce  json
-// @Param input body UserVerifyInp true "user verify"
+// @Param input body userVerifyInp true "user verify"
 // @Success 200 {object} tokenResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
 // @Router /users/verify/ [post]
 func (h *Handler) userVerify(c *gin.Context) {
-	var inp UserVerifyInp
+	var inp userVerifyInp
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
@@ -206,7 +206,7 @@ func (h *Handler) userVerify(c *gin.Context) {
 
 // @Summary User get by refresh token
 // @Security UsersAuth
-// @Tags users
+// @Tags user
 // @Description user get by refresh token
 // @ModuleID userGetByRefresh
 // @Accept  json
@@ -215,7 +215,7 @@ func (h *Handler) userVerify(c *gin.Context) {
 // @Failure 400,401,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /users/ [get]
+// @Router /user [get]
 func (h *Handler) userById(c *gin.Context) {
 	id, err := getUserId(c)
 	if err != nil {

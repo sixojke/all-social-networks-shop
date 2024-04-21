@@ -29,21 +29,35 @@ definitions:
       username:
         type: string
     type: object
-  v1.UserVerifyInp:
+  v1.categoryCreateInp:
     properties:
-      code:
+      name:
         type: string
+    required:
+    - name
+    type: object
+  v1.categoryEditInp:
+    properties:
+      change_img:
+        type: boolean
       id:
         type: integer
+      name:
+        type: string
     required:
-    - code
+    - change_img
     - id
+    - name
     type: object
   v1.dataResponse:
     properties:
       count:
         type: integer
       data: {}
+    type: object
+  v1.idResponse:
+    properties:
+      id: {}
     type: object
   v1.paginationResponse:
     properties:
@@ -61,6 +75,32 @@ definitions:
     properties:
       message:
         type: string
+    type: object
+  v1.subcategoryCreateInp:
+    properties:
+      category_id:
+        type: integer
+      min_hold_time:
+        type: integer
+      name:
+        type: string
+    required:
+    - category_id
+    - min_hold_time
+    - name
+    type: object
+  v1.subcategoryEditInp:
+    properties:
+      id:
+        type: integer
+      min_hold_time:
+        type: integer
+      name:
+        type: string
+    required:
+    - id
+    - min_hold_time
+    - name
     type: object
   v1.tokenResponse:
     properties:
@@ -101,6 +141,16 @@ definitions:
     - password
     - username
     type: object
+  v1.userVerifyInp:
+    properties:
+      code:
+        type: string
+      id:
+        type: integer
+    required:
+    - code
+    - id
+    type: object
 host: localhost:8009
 info:
   contact: {}
@@ -108,6 +158,230 @@ info:
   title: All social networks shop API
   version: "1.0"
 paths:
+  /admin/category/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete category by id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Category Delete
+      tags:
+      - category
+  /admin/category/create:
+    post:
+      consumes:
+      - application/json
+      description: create category
+      parameters:
+      - description: create category
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.categoryCreateInp'
+      - description: Category image
+        in: formData
+        name: img
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.idResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Category Create
+      tags:
+      - category
+  /admin/category/edit:
+    patch:
+      consumes:
+      - application/json
+      description: edit category by id
+      parameters:
+      - description: edit category name, img
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.categoryEditInp'
+      - description: Category image
+        in: formData
+        name: img
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Category Edit
+      tags:
+      - category
+  /admin/subcategory/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete subcategory by id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Subcategory Delete
+      tags:
+      - subcategory
+  /admin/subcategory/create:
+    post:
+      consumes:
+      - application/json
+      description: create subcategory
+      parameters:
+      - description: create subcategory
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.subcategoryCreateInp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.idResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Subcategory Create
+      tags:
+      - subcategory
+  /admin/subcategory/edit:
+    patch:
+      consumes:
+      - application/json
+      description: edit subcategory by id
+      parameters:
+      - description: edit subcategory name, min hold time
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.subcategoryEditInp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Subcategory Edit
+      tags:
+      - subcategory
   /categories:
     get:
       consumes:
@@ -240,7 +514,7 @@ paths:
       summary: Products with filters
       tags:
       - products
-  /users/:
+  /user:
     get:
       consumes:
       - application/json
@@ -276,7 +550,7 @@ paths:
       - UsersAuth: []
       summary: User get by refresh token
       tags:
-      - users
+      - user
   /users/auth/refresh:
     post:
       consumes:
@@ -410,7 +684,7 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/v1.UserVerifyInp'
+          $ref: '#/definitions/v1.userVerifyInp'
       produces:
       - application/json
       responses:

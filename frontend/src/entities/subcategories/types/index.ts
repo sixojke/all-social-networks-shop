@@ -10,6 +10,6 @@ export interface IGetAllSubcategoriesResponse {
 export interface ISubcategory {
   id: number;
   name: string;
-  hold_time: number;
+  min_hold_time: number;
   category_id: number;
 }

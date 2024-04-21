@@ -15,7 +15,14 @@ func (h *Handler) initAdminRouter(api *gin.RouterGroup) {
 		{
 			category.POST("/create", h.categoryCreate)
 			category.PATCH("/edit", h.categoryEdit)
-			category.DELETE("/delete/:id", h.categoryDelete)
+			category.DELETE("/:id", h.categoryDelete)
+		}
+
+		subcategory := admin.Group("/subcategory")
+		{
+			subcategory.POST("/create", h.subcategoryCreate)
+			subcategory.PATCH("/edit", h.subcategoryEdit)
+			subcategory.DELETE("/:id", h.subcategoryDelete)
 		}
 	}
 }
@@ -24,6 +31,19 @@ type categoryCreateInp struct {
 	Name string `json:"name" binding:"required"`
 }
 
+// @Summary Category Create
+// @Tags category
+// @Description create category
+// @ModuleID createCategory
+// @Accept  json
+// @Produce  json
+// @Param input body categoryCreateInp true "create category"
+// @Param img formData file true "Category image"
+// @Success 200 {object} idResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admin/category/create [post]
 func (h *Handler) categoryCreate(c *gin.Context) {
 	c.Header("Content-Type", "multipart/form-data")
 
@@ -67,16 +87,29 @@ func (h *Handler) categoryCreate(c *gin.Context) {
 	c.JSON(http.StatusOK, idResponse{ID: id})
 }
 
-type categoryEdit struct {
+type categoryEditInp struct {
 	Id        int    `json:"id" binding:"required"`
 	Name      string `json:"name" binding:"required"`
 	ChangeImg bool   `json:"change_img" binding:"required"`
 }
 
+// @Summary Category Edit
+// @Tags category
+// @Description edit category by id
+// @ModuleID editCategory
+// @Accept  json
+// @Produce  json
+// @Param input body categoryEditInp true "edit category name, img"
+// @Param img formData file true "Category image"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admin/category/edit [patch]
 func (h *Handler) categoryEdit(c *gin.Context) {
 	c.Header("Content-Type", "multipart/form-data")
 
-	var inp categoryEdit
+	var inp categoryEditInp
 	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
 
@@ -121,6 +154,17 @@ func (h *Handler) categoryEdit(c *gin.Context) {
 	c.JSON(http.StatusOK, response{"success"})
 }
 
+// @Summary Category Delete
+// @Tags category
+// @Description delete category by id
+// @ModuleID deleteCategory
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admin/category/{id} [delete]
 func (h *Handler) categoryDelete(c *gin.Context) {
 	id, err := processIntParam(c.Param("id"))
 	if err != nil {
@@ -130,7 +174,114 @@ func (h *Handler) categoryDelete(c *gin.Context) {
 	}
 
 	if err := h.services.Category.DeleteCategory(id); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, response{"success"})
+}
+
+type subcategoryCreateInp struct {
+	Name        string `json:"name" binding:"required"`
+	MinHoldTime int    `json:"min_hold_time" binding:"required"`
+	CategoryId  int    `json:"category_id" binding:"required"`
+}
+
+// @Summary Subcategory Create
+// @Tags subcategory
+// @Description create subcategory
+// @ModuleID createSubcategory
+// @Accept  json
+// @Produce  json
+// @Param input body subcategoryCreateInp true "create subcategory"
+// @Success 200 {object} idResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admin/subcategory/create [post]
+func (h *Handler) subcategoryCreate(c *gin.Context) {
+	var inp subcategoryCreateInp
+	if err := c.BindJSON(&inp); err != nil {
 		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	id, err := h.services.Category.CreateSubcategory(&domain.Subcategory{
+		Name:        inp.Name,
+		MinHoldTime: inp.MinHoldTime,
+		CategoryId:  inp.CategoryId,
+	})
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, idResponse{ID: id})
+}
+
+type subcategoryEditInp struct {
+	Id          int    `json:"id" binding:"required"`
+	Name        string `json:"name" binding:"required"`
+	MinHoldTime int    `json:"min_hold_time" binding:"required"`
+}
+
+// @Summary Subcategory Edit
+// @Tags subcategory
+// @Description edit subcategory by id
+// @ModuleID editSubcategory
+// @Accept  json
+// @Produce  json
+// @Param input body subcategoryEditInp true "edit subcategory name, min hold time"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admin/subcategory/edit [patch]
+func (h *Handler) subcategoryEdit(c *gin.Context) {
+	var inp subcategoryEditInp
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	if err := h.services.Category.UpdateSubcategory(&domain.Subcategory{
+		Id:          inp.Id,
+		Name:        inp.Name,
+		MinHoldTime: inp.MinHoldTime,
+	}); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, response{"success"})
+}
+
+// @Summary Subcategory Delete
+// @Tags subcategory
+// @Description delete subcategory by id
+// @ModuleID deleteSubcategory
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admin/subcategory/{id} [delete]
+func (h *Handler) subcategoryDelete(c *gin.Context) {
+	id, err := processIntParam(c.Param("id"))
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	if err := h.services.Category.DeleteSubcategory(id); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return
 	}

@@ -61,7 +61,7 @@ CREATE TABLE category(
 CREATE TABLE subcategory(
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    hold_time SMALLINT NOT NULL,
+    min_hold_time SMALLINT NOT NULL,
 
     category_id INTEGER REFERENCES category(id)
 );
