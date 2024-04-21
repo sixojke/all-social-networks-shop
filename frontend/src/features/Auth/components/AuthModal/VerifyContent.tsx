@@ -1,37 +1,34 @@
-import {
-  SignInFormValues,
-  signInSchema,
-} from "@/features/Auth/constants/signIn";
 import { FormInput } from "@/shared/components/common/Form/FormInput";
 import { Button } from "@/shared/components/ui/Buttons/Button";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FormProvider, useForm } from "react-hook-form";
-import { useSignInMutation } from "../../service";
-import { useContext } from "react";
+import { VerifyFormValues, verifySchema } from "../../constants/verify";
+import { FC, useContext } from "react";
+import { useSignUpVerifyMutation } from "../../service";
 import { ModalContext } from "@/shared/contexts/Modal";
 
-export const SignInContent = () => {
+type Props = {
+  userId: number;
+};
+
+export const VerifyContent: FC<Props> = ({ userId }) => {
   const modalContext = useContext(ModalContext);
   const onHide = () => {
     modalContext?.hideModal();
   };
-  const [signIn] = useSignInMutation();
-  const defaultValues: SignInFormValues = {
-    login: null,
-    password: null,
+  const [verify] = useSignUpVerifyMutation();
+  const defaultValues: VerifyFormValues = {
+    code: null,
+    id: userId,
   };
-  const formApi = useForm<SignInFormValues>({
+  const formApi = useForm<VerifyFormValues>({
     mode: "onChange",
     defaultValues,
-    resolver: yupResolver(signInSchema),
+    resolver: yupResolver(verifySchema),
   });
   const { handleSubmit } = formApi;
-  const onSubmit = (data: SignInFormValues) => {
-    console.log(data);
-    signIn({
-      password: data.password as string,
-      username: data.login as string,
-    })
+  const onSubmit = (data: VerifyFormValues) => {
+    verify({ id: userId, code: data.code as string })
       .unwrap()
       .then(() => {
         onHide();
@@ -41,10 +38,9 @@ export const SignInContent = () => {
     <FormProvider {...formApi}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="w-full flex flex-col gap-y-5 items-center justify-center">
-          <FormInput placeholder="Логин" name="login" />
-          <FormInput placeholder="Пароль" name="password" type="password" />
-          <Button type="submit" className="w-32">
-            Войти
+          <FormInput max={6} placeholder="КОД" name="code" />
+          <Button type="submit" className="bg-main-dark-blue">
+            Подтвердить
           </Button>
         </div>
       </form>

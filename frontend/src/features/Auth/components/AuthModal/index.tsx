@@ -4,12 +4,22 @@ import { ModalContext } from "@/shared/contexts/Modal";
 import { FormProvider, useForm } from "react-hook-form";
 import classNames from "classnames";
 import { SignUpContent } from "./SignUpContent";
+import { VerifyContent } from "./VerifyContent";
+import { isNumber } from "lodash";
+import { Loading } from "./Loading";
 
-type ContentType = "signIn" | "signUp" | "dropPassword";
+export type ContentType =
+  | "signIn"
+  | "signUp"
+  | "dropPassword"
+  | "verify"
+  | "loading";
 
 const TITLES = {
   signIn: "Авторизация",
   signUp: "Регистрация",
+  verify: "Введите код",
+  loading: "Обработка запроса",
 };
 
 export const AuthModal = () => {
@@ -21,13 +31,26 @@ export const AuthModal = () => {
     "text-lg duration-300 text-main-blue border-b-2 border-main-white hover:text-main-dark-blue hover:text-main-dark-blue hover:border-b-2 hover:border-main-dark-blue";
 
   const [contentType, setContentType] = useState<ContentType>("signIn");
+  const [userId, setUserId] = useState<number | null>(null);
 
   const getContent = () => {
-    if (contentType === "signIn") {
-      return <SignInContent />;
-    }
-    if (contentType === "signUp") {
-      return <SignUpContent />;
+    switch (contentType) {
+      case "signIn":
+        return <SignInContent />;
+
+      case "signUp":
+        return (
+          <SignUpContent
+            setUserId={setUserId}
+            setContentType={setContentType}
+          />
+        );
+
+      case "loading":
+        return <Loading />;
+
+      case "verify":
+        return isNumber(userId) && <VerifyContent userId={userId} />;
     }
   };
 
@@ -49,6 +72,16 @@ export const AuthModal = () => {
             Сбросить пароль
           </button>
         </>
+      );
+    }
+    if (contentType === "signUp") {
+      return (
+        <button
+          onClick={() => setContentType("signIn")}
+          className={classNames(changeModalTabButtonClassname)}
+        >
+          Уже есть аккаунт?
+        </button>
       );
     }
   };

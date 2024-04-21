@@ -25,6 +25,12 @@ export const emailValidationRequired = yup
   .nullable()
   .test("nullable", "Заполните поле", (value) => value !== null);
 
+export const numberValidationRequired = yup
+  .number()
+  .required("Заполните поле")
+  .nullable()
+  .test("nullable", "Заполните поле", (value) => value !== null);
+
 export const stringValidationRequired = yup
   .string()
   .required("Заполните поле")

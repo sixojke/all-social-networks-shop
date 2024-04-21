@@ -1,6 +1,6 @@
 export interface IGetAllProductsRequest {
   limit?: number;
-  offset?: number;
+  page?: number;
   category_id?: number;
   subcategory_id?: number;
   is_available?: 0 | 1;
@@ -11,9 +11,9 @@ export interface IGetAllProductsRequest {
 export interface IGetAllProductsResponse {
   Pagination: {
     data: Product[] | null;
-    total: number;
+    total_pages: number;
+    total_items: number;
     limit: number;
-    offset: number;
   };
 }
 
