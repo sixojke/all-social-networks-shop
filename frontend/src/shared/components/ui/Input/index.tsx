@@ -72,3 +72,5 @@ export const Input: FC<Props> = forwardRef(
     );
   }
 );
+
+Input.displayName = "Input";
