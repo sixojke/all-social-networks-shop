@@ -11,8 +11,7 @@ export const HeaderLayout = () => {
         <Button className="bg-main-dark-blue">PShop</Button>
         <ButtonText className="text-main-dark-blue">Фильтр</ButtonText>
         <Input
-          rounded="46px"
-          className="!bg-main-light-blue !placeholder-main-light-gray"
+          className="!bg-main-light-blue !placeholder-main-light-gray rounded-[46px]"
           searchIcon
           placeholder="Поиск"
         />

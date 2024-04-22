@@ -11,8 +11,7 @@ export const getSelectStyles = <
     }),
     control: (baseStyles) => ({
       ...baseStyles,
-      minHeight: 34,
-      padding: "5px 10px",
+      height: 32,
       caretColor: "#3485FE",
       border: "none",
       borderRadius: "10px",
@@ -28,7 +27,7 @@ export const getSelectStyles = <
     singleValue: (baseStyles) => ({
       ...baseStyles,
       color: "#3485FE",
-      fontSize: 18,
+      fontSize: 14,
     }),
     input: (baseStyles) => ({
       ...baseStyles,
@@ -67,12 +66,12 @@ export const getSelectStyles = <
     placeholder: (baseStyles) => ({
       ...baseStyles,
       color: "3485FE",
-      fontSize: 18,
+      fontSize: 14,
     }),
     multiValueLabel: (baseStyles) => ({
       ...baseStyles,
       color: "3485FE",
-      fontSize: 18,
+      fontSize: 14,
     }),
     multiValueRemove: (baseStyles) => ({
       ...baseStyles,
@@ -112,7 +111,7 @@ export const getSelectStyles = <
       backgroundColor: "white",
       fontWeight: 700,
       borderBottom: "1px solid #999DA6",
-      fontSize: 18,
+      fontSize: 14,
       transitionDuration: "0.3s",
       "&:last-child": {
         borderBottom: "1px solid white",

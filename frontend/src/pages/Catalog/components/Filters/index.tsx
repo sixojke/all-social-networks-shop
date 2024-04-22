@@ -71,14 +71,14 @@ export const Filters: FC<Props> = ({ setFilters, setOffset }) => {
       <p className="text-main-black font-semibold text-4xl mb-8">Все товары</p>
       <FormProvider {...formApi}>
         <form
-          className="flex justify-between pb-12 border-b-2 border-main-blue-gray mb-8 h-40"
+          className="flex justify-between h-[110px] border-b-[1px] border-main-light-gray mb-8"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <div className="flex gap-x-8">
+          <div className="flex gap-x-6">
             <FormSelect
               name="category"
               isClearable
-              width="w-[230px]"
+              width="w-[160px]"
               label="Категория"
               isLoading={categoriesIsLoading}
               options={
@@ -90,10 +90,10 @@ export const Filters: FC<Props> = ({ setFilters, setOffset }) => {
             />
             <FormSelect
               isClearable
+              width="w-[225px]"
               disable={!category?.id}
               placeholder={category?.id ? "Выберите" : "Выберите категорию"}
               name="subcategory"
-              width="w-[290px]"
               label="Подкатегория"
               isLoading={subcategoriesIsLoading}
               options={
@@ -106,8 +106,8 @@ export const Filters: FC<Props> = ({ setFilters, setOffset }) => {
             <FormSelect
               isClearable
               name="sort"
-              width="w-[230px]"
-              label="Сортировка товаров по цене"
+              width="w-[170px]"
+              label="Сортировка товаров"
               options={[
                 { id: 1, name: "По возрастанию", filter: "asc" } as IOption,
                 { id: 2, name: "По убыванию", filter: "desc" } as IOption,
@@ -116,13 +116,16 @@ export const Filters: FC<Props> = ({ setFilters, setOffset }) => {
             <FormSelect
               isClearable
               name="supplier"
-              width="w-[230px]"
+              width="w-[170px]"
               label="Выбор поставщика"
               options={[]}
             />
           </div>
-          <div className="self-center flex gap-x-10">
-            <Button className="bg-main-dark-blue" type="submit">
+          <div className="self-center flex gap-x-3 pb-[15px]">
+            <Button
+              className="bg-main-dark-blue text-[14.5px] !py-[8px] !px-[12px]"
+              type="submit"
+            >
               <div className="flex items-center gap-x-2">
                 <Image src={searchIcon} height={15} width={15} alt="" />
                 Поиск
@@ -130,7 +133,7 @@ export const Filters: FC<Props> = ({ setFilters, setOffset }) => {
             </Button>
             <Button
               type="button"
-              className="!text-main-dark-blue bg-main-light-blue"
+              className="!text-main-dark-blue text-[14.5px] !py-[8px] !px-[12px] bg-main-light-blue"
               onClick={formReset}
             >
               Очистить
