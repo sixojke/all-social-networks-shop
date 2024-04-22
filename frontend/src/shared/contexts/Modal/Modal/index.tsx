@@ -15,3 +15,5 @@ export const AppModal = memo(() => {
     </Modal>
   );
 });
+
+AppModal.displayName = "AppModal";

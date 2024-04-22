@@ -10,6 +10,8 @@ type Props = {
 export const ProductLayout: FC<Props> = ({
   product: { id, img, description, name, price, quantity, quantity_sales },
 }) => {
+  console.log(`${img}`);
+
   return (
     <div className="bg-[#FBFCFF] border-main-light-blue border-[1px] rounded-2xl flex justify-between px-3 py-3 items-center">
       <div className="flex items-center gap-x-5">
