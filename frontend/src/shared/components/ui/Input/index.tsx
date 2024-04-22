@@ -27,7 +27,6 @@ export const Input: FC<Props> = forwardRef(
       <div
         className={classNames(
           "bg-[#FBFCFF]",
-          `rounded-[${rounded ?? "7.25px"}]`,
           "placeholder-main-blue",
           "text-[18px]",
           "flex",
@@ -62,7 +61,7 @@ export const Input: FC<Props> = forwardRef(
         )}
         <input
           className={classNames(
-            "outline-none placeholder-main-blue text-main-dark-blue bg-[#FBFCFF] caret-main-blue-gray w-full",
+            "outline-none placeholder-main-blue text-main-dark-blue bg-[#FBFCFF] caret-main-blue-gray w-full !rounded-none",
             className
           )}
           ref={ref}
