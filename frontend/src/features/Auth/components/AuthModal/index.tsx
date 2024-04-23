@@ -1,12 +1,13 @@
 import { useContext, useState } from "react";
 import { SignInContent } from "./SignInContent";
 import { ModalContext } from "@/shared/contexts/Modal";
-import { FormProvider, useForm } from "react-hook-form";
 import classNames from "classnames";
 import { SignUpContent } from "./SignUpContent";
 import { VerifyContent } from "./VerifyContent";
 import { isNumber } from "lodash";
 import { Loading } from "./Loading";
+import CloseIcon from "@/assets/icons/close-icon.svg";
+import Image from "next/image";
 
 export type ContentType =
   | "signIn"
@@ -28,7 +29,7 @@ export const AuthModal = () => {
     modalContext?.hideModal();
   };
   const changeModalTabButtonClassname =
-    "text-lg duration-300 text-main-blue border-b-2 border-main-white hover:text-main-dark-blue hover:text-main-dark-blue hover:border-b-2 hover:border-main-dark-blue";
+    "text-lg duration-300 text-main-dark-green border-b-2 border-main-white hover:text-main-dark-green hover:text-main-dark-green hover:border-b-2 hover:border-main-dark-green";
 
   const [contentType, setContentType] = useState<ContentType>("signIn");
   const [userId, setUserId] = useState<number | null>(null);
@@ -64,7 +65,7 @@ export const AuthModal = () => {
           >
             Создать аккаунт
           </button>
-          <div className="h-2/4 w-[2px] bg-main-dark-blue" />
+          <div className="h-2/4 w-[2px] bg-main-dark-green" />
           <button
             onClick={() => setContentType("dropPassword")}
             className={classNames(changeModalTabButtonClassname)}
@@ -90,11 +91,11 @@ export const AuthModal = () => {
       <div className="flex flex-col w-full items-center justify-between">
         <p
           onClick={onHide}
-          className="rounded-full cursor-pointer select-none w-7 h-7 self-end bg-main-blue flex justify-center items-center text-main-white font-semibold hover:bg-main-dark-blue duration-150"
+          className="rounded-full cursor-pointer select-none w-7 h-7 self-end bg-main-dark-green flex justify-center items-center hover:bg-main-black duration-150"
         >
-          X
+          <Image src={CloseIcon} width={12} height={12} alt="" />
         </p>
-        <p className="text-main-dark-blue font-semibold text-2xl mt-3">
+        <p className="text-main-dark-green font-semibold text-2xl mt-3">
           {TITLES[contentType as keyof typeof TITLES]}
         </p>
         <div className="mt-7 w-full px-24">{getContent()}</div>

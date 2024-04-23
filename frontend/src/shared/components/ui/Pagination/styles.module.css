@@ -11,12 +11,12 @@
   border-radius: 5px;
   color: white;
   cursor: pointer;
-  background: #0065fd;
+  background: #018476;
   transition-duration: 0.3s;
 }
 
 .active:hover {
-  background-color: #99c2ff;
+  background-color: #018476;
 }
 
 .page {
@@ -27,6 +27,6 @@
 }
 
 .page:hover {
-  background-color: #99c2ff;
+  background-color: #018476;
   color: white;
 }

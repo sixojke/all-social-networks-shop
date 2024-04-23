@@ -7,6 +7,9 @@ import { QueryHandler } from "@/widgets/QueryHandler";
 import { Filters } from "../components/Filters";
 import { useState } from "react";
 import { Pagination } from "@/shared/components/ui/Pagination";
+import { AdBlock } from "../components/AdBlock";
+import { Footer } from "../components/Footer";
+import { useGetAllCategoriesQuery } from "@/entities/categories";
 
 export const CatalogPageLayout = () => {
   const [filters, setFilters] = useState<IGetAllProductsRequest>({});
@@ -15,6 +18,8 @@ export const CatalogPageLayout = () => {
     ...filters,
     page,
   });
+  const { data: categories, isLoading: categoriesIsLoading } =
+    useGetAllCategoriesQuery();
 
   const onPageChange = (page: number) => {
     setPage(page + 1);
@@ -24,14 +29,17 @@ export const CatalogPageLayout = () => {
     <>
       <main className="px-64 mt-10">
         <div className="px-[190px]">
-          <Filters setOffset={setPage} setFilters={setFilters} />
+          <AdBlock />
+          <div className="mt-7">
+            <Filters setOffset={setPage} setFilters={setFilters} />
+          </div>
           <QueryHandler
             isError={isError}
             isLoading={isLoading}
             errorLabel="При загрузке товаров произошла ошибка"
           />
           {!data?.Pagination.data && !isError && !isLoading && (
-            <div className="w-full flex justify-center flex-col items-center gap-y-9 mt-24 text-3xl font-bold text-main-dark-blue">
+            <div className="w-full flex justify-center flex-col items-center gap-y-9 mt-24 text-3xl font-semibold text-main-dark-green">
               По указанному запросу товаров не найдено
             </div>
           )}
@@ -47,6 +55,12 @@ export const CatalogPageLayout = () => {
           </div>
         )}
       </main>
+      <div className="mt-20">
+        <Footer
+          isLoading={categoriesIsLoading}
+          categories={categories?.data ?? []}
+        />
+      </div>
     </>
   );
 };

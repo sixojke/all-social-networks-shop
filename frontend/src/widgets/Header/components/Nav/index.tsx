@@ -9,7 +9,7 @@ export const Nav = () => {
     <nav>
       <ul className="flex gap-x-6">
         <li>
-          <Button className="bg-main-dark-blue">
+          <Button className="bg-main-dark-green">
             <div className="flex items-center gap-x-3">
               Каталог
               <Image alt="" src={bottomArrowIcon} height={22} width={24} />
@@ -26,7 +26,7 @@ export const Nav = () => {
           <ButtonText>Контакты</ButtonText>
         </li>
         <li>
-          <Button className="bg-main-dark-blue">
+          <Button className="bg-main-dark-green">
             <div className="flex items-center gap-x-3">
               Для поставщиков
               <Image alt="" src={supplierIcon} height={21} width={21} />

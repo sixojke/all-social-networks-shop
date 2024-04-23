@@ -9,7 +9,7 @@ export const AuthButton = () => {
     modalContext?.showModal(<AuthModal />);
   };
   return (
-    <Button onClick={showModal} className="bg-main-dark-blue">
+    <Button onClick={showModal} className="bg-main-dark-green">
       Войти
     </Button>
   );

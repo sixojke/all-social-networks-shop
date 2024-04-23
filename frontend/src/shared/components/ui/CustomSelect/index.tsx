@@ -19,7 +19,7 @@ export const CustomSelect = <TData extends IOption = IOption>({
 
   return (
     <div className={width}>
-      <p className="text-main-blue-gray text-[14px] mb-2">{label}</p>
+      <p className="text-main-green-gray text-[14px] mb-2">{label}</p>
       <Select
         instanceId={useId()}
         options={options}
