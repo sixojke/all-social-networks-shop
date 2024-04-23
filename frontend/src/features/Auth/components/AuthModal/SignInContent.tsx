@@ -7,12 +7,16 @@ import { Button } from "@/shared/components/ui/Buttons/Button";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FormProvider, useForm } from "react-hook-form";
 import { useSignInMutation } from "../../service";
-import { useContext } from "react";
+import { FC, useContext } from "react";
 import { ModalContext } from "@/shared/contexts/Modal";
 import { SignInResponse } from "../../types";
 import { useRouter } from "next/navigation";
 
-export const SignInContent = () => {
+type Props = {
+  setErrorContent: () => void;
+};
+
+export const SignInContent: FC<Props> = ({ setErrorContent }) => {
   const router = useRouter();
   const modalContext = useContext(ModalContext);
   const onHide = () => {
@@ -40,14 +44,23 @@ export const SignInContent = () => {
         localStorage.setItem("refreshToken", res.refreshToken);
         onHide();
         router.refresh();
+      })
+      .catch(() => {
+        setErrorContent();
       });
   };
   return (
     <FormProvider {...formApi}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="w-full flex flex-col gap-y-5 items-center justify-center">
-          <FormInput border placeholder="Логин" name="login" />
           <FormInput
+            className="bg-main-light-gray"
+            border
+            placeholder="Логин"
+            name="login"
+          />
+          <FormInput
+            className="bg-main-light-gray"
             border
             placeholder="Пароль"
             name="password"

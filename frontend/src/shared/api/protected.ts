@@ -14,7 +14,7 @@ export const baseQuery = fetchBaseQuery({
   baseUrl: baseUrl,
   credentials: "same-origin",
   headers: {
-    Authorization: `Bearer ${accessToken}`,
+    Authorization: `Bearer=${accessToken}`,
   },
 });
 

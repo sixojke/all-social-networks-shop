@@ -28,7 +28,7 @@ export const Input: FC<Props> = forwardRef(
     return (
       <div
         className={classNames(
-          "bg-[#F9FFFE]",
+          "bg-main-light-gray",
           "placeholder-main-light-green",
           "text-[18px]",
           "flex",
@@ -39,13 +39,14 @@ export const Input: FC<Props> = forwardRef(
           "font-normal",
           "h-12",
           "py-[4.5px]",
-          "rounded-[5px]",
+          "rounded-[10px]",
           "gap-x-3",
           "select-none",
           "w-full",
           "outline-none",
           {
-            ["border-solid border-main-dark-green border-[1px]"]: border && !error,
+            ["border-solid border-main-dark-green border-[1px]"]:
+              border && !error,
             ["border-none"]: !border && !error,
             ["border-solid !border-main-error-dark-red border-[1px] placeholder-main-error-dark-red caret-main-error-dark-red"]:
               error,
@@ -65,7 +66,7 @@ export const Input: FC<Props> = forwardRef(
         )}
         <input
           className={classNames(
-            "outline-none placeholder-main-dark-green text-main-dark-green bg-[#F9FFFE] caret-main-green-gray w-full !rounded-none",
+            "outline-none placeholder-main-dark-green text-main-dark-green !bg-opacity-0 caret-main-green-gray w-full !rounded-none",
             className
           )}
           ref={ref}

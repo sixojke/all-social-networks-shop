@@ -8,25 +8,25 @@
 
 .active {
   padding: 5px 10px;
-  border-radius: 5px;
+  border-radius: 3px;
   color: white;
   cursor: pointer;
-  background: #018476;
+  background: #262626;
   transition-duration: 0.3s;
 }
 
 .active:hover {
-  background-color: #018476;
+  background-color: #262626;
 }
 
 .page {
   padding: 5px 13px;
-  border-radius: 5px;
+  border-radius: 3px;
   cursor: pointer;
   transition-duration: 0.3s;
 }
 
 .page:hover {
-  background-color: #018476;
+  background-color: #262626;
   color: white;
 }

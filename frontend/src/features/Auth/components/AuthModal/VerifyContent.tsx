@@ -9,9 +9,10 @@ import { ModalContext } from "@/shared/contexts/Modal";
 
 type Props = {
   userId: number;
+  setErrorContent: () => void;
 };
 
-export const VerifyContent: FC<Props> = ({ userId }) => {
+export const VerifyContent: FC<Props> = ({ userId, setErrorContent }) => {
   const modalContext = useContext(ModalContext);
   const onHide = () => {
     modalContext?.hideModal();
@@ -32,6 +33,9 @@ export const VerifyContent: FC<Props> = ({ userId }) => {
       .unwrap()
       .then(() => {
         onHide();
+      })
+      .catch(() => {
+        setErrorContent();
       });
   };
   return (

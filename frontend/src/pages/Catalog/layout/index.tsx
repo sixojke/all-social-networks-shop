@@ -27,7 +27,7 @@ export const CatalogPageLayout = () => {
 
   return (
     <>
-      <main className="px-64 mt-10">
+      <main className="px-52 mt-10">
         <div className="px-[190px]">
           <AdBlock />
           <div className="mt-7">

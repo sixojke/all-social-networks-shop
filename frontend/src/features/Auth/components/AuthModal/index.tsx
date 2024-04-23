@@ -8,19 +8,22 @@ import { isNumber } from "lodash";
 import { Loading } from "./Loading";
 import CloseIcon from "@/assets/icons/close-icon.svg";
 import Image from "next/image";
+import { ErrorContent } from "./ErrorContent";
 
 export type ContentType =
   | "signIn"
   | "signUp"
   | "dropPassword"
   | "verify"
-  | "loading";
+  | "loading"
+  | "error";
 
 const TITLES = {
   signIn: "Авторизация",
   signUp: "Регистрация",
   verify: "Введите код",
   loading: "Обработка запроса",
+  error: "Ошибка",
 };
 
 export const AuthModal = () => {
@@ -29,19 +32,22 @@ export const AuthModal = () => {
     modalContext?.hideModal();
   };
   const changeModalTabButtonClassname =
-    "text-lg duration-300 text-main-dark-green border-b-2 border-main-white hover:text-main-dark-green hover:text-main-dark-green hover:border-b-2 hover:border-main-dark-green";
+    "text-lg duration-300 text-main-dark-green border-b-2 border-main-white hover:text-main-dark-green hover:text-main-black hover:border-b-2 hover:border-main-black";
 
   const [contentType, setContentType] = useState<ContentType>("signIn");
   const [userId, setUserId] = useState<number | null>(null);
-
+  const setErrorContent = () => {
+    setContentType("error");
+  };
   const getContent = () => {
     switch (contentType) {
       case "signIn":
-        return <SignInContent />;
+        return <SignInContent setErrorContent={setErrorContent} />;
 
       case "signUp":
         return (
           <SignUpContent
+            setErrorContent={setErrorContent}
             setUserId={setUserId}
             setContentType={setContentType}
           />
@@ -51,7 +57,14 @@ export const AuthModal = () => {
         return <Loading />;
 
       case "verify":
-        return isNumber(userId) && <VerifyContent userId={userId} />;
+        return (
+          isNumber(userId) && (
+            <VerifyContent setErrorContent={setErrorContent} userId={userId} />
+          )
+        );
+
+      case "error":
+        return <ErrorContent setContentType={() => setContentType("signIn")} />;
     }
   };
 
@@ -87,7 +100,7 @@ export const AuthModal = () => {
     }
   };
   return (
-    <div className="bg-main-white w-[680px] h-[550px] rounded-2xl flex items-center flex-col justify-between py-5 px-5">
+    <div className="bg-white w-[680px] h-[550px] rounded-[10px] flex items-center flex-col justify-between py-5 px-5">
       <div className="flex flex-col w-full items-center justify-between">
         <p
           onClick={onHide}

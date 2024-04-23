@@ -71,7 +71,7 @@ export const Filters: FC<Props> = ({ setFilters, setOffset }) => {
       <p className="text-main-black font-semibold text-4xl mb-8">Все товары</p>
       <FormProvider {...formApi}>
         <form
-          className="flex justify-between h-[110px] border-b-[1px] border-main-green-gray mb-8"
+          className="flex justify-between h-[110px] border-b-[1px] border-main-dark-gray mb-8"
           onSubmit={handleSubmit(onSubmit)}
         >
           <div className="flex gap-x-6">
@@ -133,7 +133,7 @@ export const Filters: FC<Props> = ({ setFilters, setOffset }) => {
             </Button>
             <Button
               type="button"
-              className="!text-main-dark-green !text-[16px] !py-[8px] !px-[12px] bg-main-light-green !font-light"
+              className="!text-main-dark-green !text-[16px] !py-[8px] !px-[12px] bg-main-light-gray !text-main-black !font-light"
               onClick={formReset}
             >
               Очистить
