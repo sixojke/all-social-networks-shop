@@ -24,7 +24,7 @@ export const QueryHandler: FC<Props> = ({ errorLabel, isError, isLoading }) => {
       {isError && (
         <div className="w-full flex justify-center flex-col items-center gap-y-9 mt-24 text-3xl font-bold text-main-error-dark-red">
           {errorLabel}
-          <Button onClick={reloadPage} className="bg-main-dark-blue">
+          <Button onClick={reloadPage} className="bg-main-dark-green">
             Перезагрузить страницу
           </Button>
         </div>

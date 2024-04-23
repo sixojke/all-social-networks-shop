@@ -21,15 +21,15 @@ export const Button: FC<Props> = ({
         "rounded-3xl",
         "text-[18px]",
         "p-0",
-        "transition",
+        "duration-150",
         "px-[20px]",
         "font-semibold",
         "py-[10px]",
         "select-none",
         {
           ["active:brightness-125"]: !disabled,
-          ["hover:bg-main-blue-gray"]: !disabled,
-          ["border-solid border-main-blue border-[1px]"]: border,
+          ["hover:brightness-90"]: !disabled,
+          ["border-solid border-[#BFE0DD] border-[1px]"]: border,
           ["border-none"]: !border,
         },
         className

@@ -12,13 +12,13 @@ export const getSelectStyles = <
     control: (baseStyles) => ({
       ...baseStyles,
       height: 32,
-      caretColor: "#3485FE",
+      caretColor: "#018476",
       border: "none",
       borderRadius: "10px",
       cursor: "pointer",
       boxShadow: "none",
-      color: "#3485FE",
-      backgroundColor: "#E6F0FF",
+      color: "#018476",
+      backgroundColor: "#E6FFFA",
       "&:hover": {
         borderColor: "",
         color: "#999DA6",
@@ -26,12 +26,12 @@ export const getSelectStyles = <
     }),
     singleValue: (baseStyles) => ({
       ...baseStyles,
-      color: "#3485FE",
+      color: "#018476",
       fontSize: 14,
     }),
     input: (baseStyles) => ({
       ...baseStyles,
-      color: "#3485FE",
+      color: "#018476",
     }),
     menu: (baseStyles) => ({
       ...baseStyles,
@@ -42,7 +42,7 @@ export const getSelectStyles = <
     }),
     noOptionsMessage: (baseStyles) => ({
       ...baseStyles,
-      color: "#3D73FE",
+      color: "#018476",
       boxShadow: "none",
       fontWeight: 500,
     }),
@@ -51,21 +51,21 @@ export const getSelectStyles = <
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      rowGap: "10px",
+      rowGap: "0",
       padding: "10px 0",
-      color: "#3485FE",
+      color: "#018476",
     }),
     multiValue: (baseStyles) => ({
       ...baseStyles,
       backgroundColor: "#072659",
-      color: "3485FE",
+      color: "#018476",
     }),
     loadingIndicator: () => ({
       display: "none",
     }),
     placeholder: (baseStyles) => ({
       ...baseStyles,
-      color: "3485FE",
+      color: "#018476",
       fontSize: 14,
     }),
     multiValueLabel: (baseStyles) => ({
@@ -86,7 +86,7 @@ export const getSelectStyles = <
       ...baseStyles,
       height: "100%",
       borderRadius: "10px",
-      color: "#3485FE",
+      color: "#018476",
       "&:hover": {
         color: "3485FE",
         cursor: "pointer",
@@ -97,7 +97,7 @@ export const getSelectStyles = <
       ...baseStyles,
       paddingRight: 0,
       height: "100%",
-      color: "#3485FE",
+      color: "#018476",
       cursor: "pointer",
       "&:hover": {
         color: "#999DA6",
@@ -107,7 +107,7 @@ export const getSelectStyles = <
       ...baseStyles,
       cursor: "pointer",
       width: "85%",
-      color: "#3485FE",
+      color: "#018476",
       backgroundColor: "white",
       fontWeight: 700,
       borderBottom: "1px solid #999DA6",
@@ -120,7 +120,7 @@ export const getSelectStyles = <
         borderRadius: "5px",
         borderBottom: "1px solid #3485FE",
         color: "white",
-        backgroundColor: "#3485FE",
+        backgroundColor: "#018476",
       },
     }),
   };

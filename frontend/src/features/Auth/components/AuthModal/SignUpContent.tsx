@@ -54,7 +54,7 @@ export const SignUpContent: FC<Props> = ({ setContentType, setUserId }) => {
             name="password"
             type="password"
           />
-          <Button type="submit" className="w-32 bg-main-dark-blue">
+          <Button type="submit" className="w-32 bg-main-dark-green">
             Создать
           </Button>
         </div>

@@ -30,7 +30,6 @@ export const SignInContent = () => {
   });
   const { handleSubmit } = formApi;
   const onSubmit = (data: SignInFormValues) => {
-    console.log(data);
     signIn({
       password: data.password as string,
       username: data.login as string,
@@ -54,7 +53,7 @@ export const SignInContent = () => {
             name="password"
             type="password"
           />
-          <Button type="submit" className="w-32 bg-main-dark-blue">
+          <Button type="submit" className="w-32 bg-main-dark-green">
             Войти
           </Button>
         </div>
