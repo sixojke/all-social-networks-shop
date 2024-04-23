@@ -25,7 +25,7 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 }
 
 type userSignUpInp struct {
-	Username string `json:"username" binding:"required,min=8,max=32"`
+	Username string `json:"username" binding:"required,min=6,max=32"`
 	Password string `json:"password" binding:"required,min=8,max=64"`
 	Email    string `json:"email" binding:"required,email,max=64"`
 }
