@@ -8,6 +8,7 @@ import {
   SignUpResponse,
   SignUpVerifyRequest,
 } from "../types";
+import { useRouter } from "next/navigation";
 
 const baseUrl = "http://localhost:8009/api/v1/users/";
 
@@ -54,3 +55,13 @@ export const {
   useSignInMutation,
   useSignUpVerifyMutation,
 } = authApi;
+
+export const useLogout = () => {
+  const router = useRouter();
+  const logout = () => {
+    router.replace("/catalog");
+    localStorage.clear();
+    router.refresh();
+  };
+  return logout;
+};

@@ -5,16 +5,19 @@ import { Provider } from "react-redux";
 import { WithModalContext } from "@/hocs/WithModalContext";
 import { AppModal } from "@/shared/contexts/Modal/Modal";
 import { AppLayout } from "@/hocs/AppLayout";
+import { AppInitializer } from "./AppInitializer";
 
 export const App = ({ Component, pageProps }: AppProps) => {
   return (
     <Provider store={store}>
-      <WithModalContext>
-        <AppModal />
-        <AppLayout>
-          <Component {...pageProps} />
-        </AppLayout>
-      </WithModalContext>
+      <AppInitializer>
+        <WithModalContext>
+          <AppModal />
+          <AppLayout>
+            <Component {...pageProps} />
+          </AppLayout>
+        </WithModalContext>
+      </AppInitializer>
     </Provider>
   );
 };

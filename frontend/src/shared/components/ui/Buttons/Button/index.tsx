@@ -16,9 +16,9 @@ export const Button: FC<Props> = ({
     <button
       disabled={disabled}
       className={classNames(
-        "bg-main-blue",
+        "bg-main-black",
         "text-main-white",
-        "rounded-3xl",
+        "rounded-[10px]",
         "text-[18px]",
         "p-0",
         "duration-150",
@@ -29,7 +29,7 @@ export const Button: FC<Props> = ({
         {
           ["active:brightness-125"]: !disabled,
           ["hover:brightness-90"]: !disabled,
-          ["border-solid border-[#BFE0DD] border-[1px]"]: border,
+          ["border-solid border-main-dark-gray border-opacity-30 border-[1px]"]: border,
           ["border-none"]: !border,
         },
         className

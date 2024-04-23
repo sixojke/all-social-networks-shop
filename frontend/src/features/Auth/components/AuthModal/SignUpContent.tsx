@@ -11,11 +11,16 @@ import { ContentType } from ".";
 import { FC } from "react";
 
 type Props = {
+  setErrorContent: () => void;
   setContentType: (content: ContentType) => void;
   setUserId: (userId: number) => void;
 };
 
-export const SignUpContent: FC<Props> = ({ setContentType, setUserId }) => {
+export const SignUpContent: FC<Props> = ({
+  setContentType,
+  setUserId,
+  setErrorContent,
+}) => {
   const [signUp] = useSignUpMutation();
   const defaultValues: SignUpFormValues = {
     login: null,
@@ -39,16 +44,30 @@ export const SignUpContent: FC<Props> = ({ setContentType, setUserId }) => {
       .then((res) => {
         setUserId(res.id);
         setContentType("verify");
+      })
+      .catch(() => {
+        setErrorContent();
       });
-    console.log(data);
   };
   return (
     <FormProvider {...formApi}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="w-full flex flex-col gap-y-5 items-center justify-center">
-          <FormInput border placeholder="Логин" name="login" />
-          <FormInput border placeholder="Email" name="email" type="email" />
           <FormInput
+            className="bg-main-light-gray"
+            border
+            placeholder="Логин"
+            name="login"
+          />
+          <FormInput
+            className="bg-main-light-gray"
+            border
+            placeholder="Email"
+            name="email"
+            type="email"
+          />
+          <FormInput
+            className="bg-main-light-gray"
             border
             placeholder="Пароль"
             name="password"
