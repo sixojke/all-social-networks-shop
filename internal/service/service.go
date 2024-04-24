@@ -33,6 +33,7 @@ type Users interface {
 	RefreshTokens(refreshToken string) (Tokens, error)
 	Verify(userId int, code string) error
 	GetById(id int) (*domain.User, error)
+	Ban(id int, banStatus bool) error
 }
 
 type Category interface {

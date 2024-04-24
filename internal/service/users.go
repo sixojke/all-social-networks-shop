@@ -130,8 +130,16 @@ func (s *UsersService) createSession(userId int, userRole string) (Tokens, error
 func (s *UsersService) GetById(id int) (*domain.User, error) {
 	user, err := s.repo.GetById(id)
 	if err != nil {
-		return nil, fmt.Errorf("error users service UserByRefreshToken: %v", err)
+		return nil, fmt.Errorf("error users service GetById: %v", err)
 	}
 
 	return user, nil
+}
+
+func (s *UsersService) Ban(id int, banStatus bool) error {
+	if err := s.repo.Ban(id, banStatus); err != nil {
+		return fmt.Errorf("error users service Ban: %v", err)
+	}
+
+	return nil
 }

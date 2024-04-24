@@ -183,3 +183,39 @@ func (r *UsersPostgres) GetById(id int) (*domain.User, error) {
 
 	return &user, nil
 }
+
+func (r *UsersPostgres) Ban(id int, banStatus bool) error {
+	query := fmt.Sprintf(`
+	INSERT INTO %s
+		(id, status)
+	VALUES 
+		($1, $2)
+	WHERE NOT EXISTS (
+		SELECT 1
+		FROM %s
+		WHERE id = $1
+	);`, bannedUsers, bannedUsers)
+
+	result, err := r.db.Exec(query, id, banStatus)
+	if err != nil {
+		return fmt.Errorf("insert banned user: %v", err)
+	}
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("rows affected: %v", err)
+	}
+
+	if rows > 0 {
+		query = fmt.Sprintf(`
+		UPDATE %s
+		SET status = $1
+		WHERE id = $2`, bannedUsers)
+
+		if _, err := r.db.Exec(query, banStatus, id); err != nil {
+			return fmt.Errorf("update banned user status: %v", err)
+		}
+	}
+
+	return nil
+}

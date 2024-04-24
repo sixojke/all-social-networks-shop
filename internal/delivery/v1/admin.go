@@ -24,6 +24,11 @@ func (h *Handler) initAdminRouter(api *gin.RouterGroup) {
 			subcategory.PATCH("/edit", h.subcategoryEdit)
 			subcategory.DELETE("/:id", h.subcategoryDelete)
 		}
+
+		userManagement := admin.Group("/user-management")
+		{
+			userManagement.PATCH("/ban", h.userManagementBan)
+		}
 	}
 }
 
@@ -32,6 +37,7 @@ type categoryCreateInp struct {
 }
 
 // @Summary Category Create
+// @Security UsersAuth
 // @Tags category
 // @Description create category
 // @ModuleID createCategory
@@ -94,6 +100,7 @@ type categoryEditInp struct {
 }
 
 // @Summary Category Edit
+// @Security UsersAuth
 // @Tags category
 // @Description edit category by id
 // @ModuleID editCategory
@@ -155,6 +162,7 @@ func (h *Handler) categoryEdit(c *gin.Context) {
 }
 
 // @Summary Category Delete
+// @Security UsersAuth
 // @Tags category
 // @Description delete category by id
 // @ModuleID deleteCategory
@@ -189,6 +197,7 @@ type subcategoryCreateInp struct {
 }
 
 // @Summary Subcategory Create
+// @Security UsersAuth
 // @Tags subcategory
 // @Description create subcategory
 // @ModuleID createSubcategory
@@ -229,6 +238,7 @@ type subcategoryEditInp struct {
 }
 
 // @Summary Subcategory Edit
+// @Security UsersAuth
 // @Tags subcategory
 // @Description edit subcategory by id
 // @ModuleID editSubcategory
@@ -262,6 +272,7 @@ func (h *Handler) subcategoryEdit(c *gin.Context) {
 }
 
 // @Summary Subcategory Delete
+// @Security UsersAuth
 // @Tags subcategory
 // @Description delete subcategory by id
 // @ModuleID deleteSubcategory
@@ -287,4 +298,39 @@ func (h *Handler) subcategoryDelete(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response{"success"})
+}
+
+type userManagementBan struct {
+	UserId    int  `json:"id" binding:"required"`
+	BanStatus bool `json:"ban_status" binding:"required"`
+}
+
+// @Summary User edit banned
+// @Security UsersAuth
+// @Tags user
+// @Description edit banned user
+// @ModuleID userManagementBan
+// @Accept  json
+// @Produce  json
+// @Param input body userManagementBan true "edit banned user"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admin/user-management/ban [patch]
+func (h *Handler) userManagementBan(c *gin.Context) {
+	var inp userManagementBan
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	if err := h.services.Users.Ban(inp.UserId, inp.BanStatus); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, response{Message: "success"})
 }

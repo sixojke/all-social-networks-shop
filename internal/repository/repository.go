@@ -13,6 +13,7 @@ type Users interface {
 	Verify(userId int, code string) error
 	SetSession(session *domain.Session) error
 	GetById(id int) (*domain.User, error)
+	Ban(id int, banStatus bool) error
 }
 
 type Category interface {

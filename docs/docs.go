@@ -17,6 +17,11 @@ const docTemplate = `{
     "paths": {
         "/admin/category/create": {
             "post": {
+                "security": [
+                    {
+                        "UsersAuth": []
+                    }
+                ],
                 "description": "create category",
                 "consumes": [
                     "application/json"
@@ -82,6 +87,11 @@ const docTemplate = `{
         },
         "/admin/category/edit": {
             "patch": {
+                "security": [
+                    {
+                        "UsersAuth": []
+                    }
+                ],
                 "description": "edit category by id",
                 "consumes": [
                     "application/json"
@@ -147,6 +157,11 @@ const docTemplate = `{
         },
         "/admin/category/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "UsersAuth": []
+                    }
+                ],
                 "description": "delete category by id",
                 "consumes": [
                     "application/json"
@@ -194,6 +209,11 @@ const docTemplate = `{
         },
         "/admin/subcategory/create": {
             "post": {
+                "security": [
+                    {
+                        "UsersAuth": []
+                    }
+                ],
                 "description": "create subcategory",
                 "consumes": [
                     "application/json"
@@ -252,6 +272,11 @@ const docTemplate = `{
         },
         "/admin/subcategory/edit": {
             "patch": {
+                "security": [
+                    {
+                        "UsersAuth": []
+                    }
+                ],
                 "description": "edit subcategory by id",
                 "consumes": [
                     "application/json"
@@ -310,6 +335,11 @@ const docTemplate = `{
         },
         "/admin/subcategory/{id}": {
             "delete": {
+                "security": [
+                    {
+                        "UsersAuth": []
+                    }
+                ],
                 "description": "delete subcategory by id",
                 "consumes": [
                     "application/json"
@@ -321,6 +351,69 @@ const docTemplate = `{
                     "subcategory"
                 ],
                 "summary": "Subcategory Delete",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/v1.response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/user-management/ban": {
+            "patch": {
+                "security": [
+                    {
+                        "UsersAuth": []
+                    }
+                ],
+                "description": "edit banned user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "User edit banned",
+                "parameters": [
+                    {
+                        "description": "edit banned user",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.userManagementBan"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1022,6 +1115,21 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.userManagementBan": {
+            "type": "object",
+            "required": [
+                "ban_status",
+                "id"
+            ],
+            "properties": {
+                "ban_status": {
+                    "type": "boolean"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
         "v1.userSignInInp": {
             "type": "object",
             "required": [
@@ -1061,7 +1169,7 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "maxLength": 32,
-                    "minLength": 8
+                    "minLength": 6
                 }
             }
         },

@@ -14,5 +14,6 @@ const (
 	category     = "category"
 	suppliers    = "suppliers"
 	subcategory  = "subcategory"
+	bannedUsers  = "banned_users"
 	verification = "verification"
 )

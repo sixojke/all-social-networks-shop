@@ -42,6 +42,12 @@ CREATE TABLE buyers(
     user_id BIGINT REFERENCES users(id)
 );
 
+CREATE TABLE banned_users(
+    user_id FOREIGN KEY UNIQUE REFERENCES users(id),
+    status BOOLEAN NOT NULL,
+    banned_at TIMESTAMP DEFAULT now()
+);
+
 CREATE TABLE reviews(
     id SERIAL PRIMARY KEY,
     text TEXT,

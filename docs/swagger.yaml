@@ -109,6 +109,16 @@ definitions:
       refreshToken:
         type: string
     type: object
+  v1.userManagementBan:
+    properties:
+      ban_status:
+        type: boolean
+      id:
+        type: integer
+    required:
+    - ban_status
+    - id
+    type: object
   v1.userSignInInp:
     properties:
       password:
@@ -134,7 +144,7 @@ definitions:
         type: string
       username:
         maxLength: 32
-        minLength: 8
+        minLength: 6
         type: string
     required:
     - email
@@ -186,6 +196,8 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
       summary: Category Delete
       tags:
       - category
@@ -229,6 +241,8 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
       summary: Category Create
       tags:
       - category
@@ -272,6 +286,8 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
       summary: Category Edit
       tags:
       - category
@@ -303,6 +319,8 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
       summary: Subcategory Delete
       tags:
       - subcategory
@@ -341,6 +359,8 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
       summary: Subcategory Create
       tags:
       - subcategory
@@ -379,9 +399,51 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
       summary: Subcategory Edit
       tags:
       - subcategory
+  /admin/user-management/ban:
+    patch:
+      consumes:
+      - application/json
+      description: edit banned user
+      parameters:
+      - description: edit banned user
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.userManagementBan'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: User edit banned
+      tags:
+      - user
   /categories:
     get:
       consumes:
