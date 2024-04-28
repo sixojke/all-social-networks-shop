@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
@@ -29,6 +30,11 @@ func (h *Handler) initAdminRouter(api *gin.RouterGroup) {
 		{
 			userManagement.PATCH("/ban", h.userManagementBan)
 		}
+
+		log := admin.Group("/log")
+		{
+			log.GET("", h.adminLogs)
+		}
 	}
 }
 
@@ -41,7 +47,7 @@ type categoryCreateInp struct {
 // @Tags category
 // @Description create category
 // @ModuleID createCategory
-// @Accept  json
+// @Accept  multipart/form-data
 // @Produce  json
 // @Param input body categoryCreateInp true "create category"
 // @Param img formData file true "Category image"
@@ -52,6 +58,7 @@ type categoryCreateInp struct {
 // @Router /admin/category/create [post]
 func (h *Handler) categoryCreate(c *gin.Context) {
 	c.Header("Content-Type", "multipart/form-data")
+	fmt.Println("nen")
 
 	var inp categoryCreateInp
 	if err := c.BindJSON(&inp); err != nil {
@@ -59,6 +66,7 @@ func (h *Handler) categoryCreate(c *gin.Context) {
 
 		return
 	}
+	fmt.Println("nen")
 
 	file, err := c.FormFile("img")
 	if err != nil {
@@ -66,6 +74,7 @@ func (h *Handler) categoryCreate(c *gin.Context) {
 
 		return
 	}
+	fmt.Println("nen")
 
 	dir, err := os.Getwd()
 	if err != nil {
@@ -278,6 +287,7 @@ func (h *Handler) subcategoryEdit(c *gin.Context) {
 // @ModuleID deleteSubcategory
 // @Accept  json
 // @Produce  json
+// @Param id path int true "subcategory id"
 // @Success 200 {object} response
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
@@ -326,6 +336,13 @@ func (h *Handler) userManagementBan(c *gin.Context) {
 		return
 	}
 
+	// id, err := getUserId(c)
+	// if err != nil {
+	// 	newResponse(c, http.StatusInternalServerError, err.Error())
+
+	// 	return
+	// }
+
 	if err := h.services.Users.Ban(inp.UserId, inp.BanStatus); err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
@@ -333,4 +350,43 @@ func (h *Handler) userManagementBan(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response{Message: "success"})
+}
+
+// @Summary Logs with pagination
+// @Security UsersAuth
+// @Tags log
+// @Description get logs with pagination
+// @ModuleID userManagementBan
+// @Accept  json
+// @Produce  json
+// @Param limit query int false "Number of items per page" default(10) maximum(100)
+// @Param page query int false "Page number" default(1)
+// @Success 200 {object} domain.Pagination
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admin/log [get]
+func (h *Handler) adminLogs(c *gin.Context) {
+	limit, err := processIntParam(c.Query("limit"))
+	if err != nil {
+		limit = h.config.Pagination.DefaultLimit
+	}
+
+	page, err := processIntParam(c.Query("page"))
+	if err != nil {
+		page = 1
+	}
+
+	if limit > h.config.Pagination.MaxLimit {
+		limit = h.config.Pagination.MaxLimit
+	}
+
+	logs, err := h.services.Log.GetAdminLogs(limit, page*limit-limit)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, logs)
 }

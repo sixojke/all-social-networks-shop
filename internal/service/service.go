@@ -47,6 +47,11 @@ type Category interface {
 	GetSubcategories(categoryId int) (*[]domain.Subcategory, error)
 }
 
+type Log interface {
+	WriteAdminLog(log *domain.Log) error
+	GetAdminLogs(limit, offset int) (*domain.Pagination, error)
+}
+
 type Products interface {
 	// Create(product *domain.Product) (int, error)
 	GetAll(filters *domain.ProductFilters) (*domain.Pagination, error)
@@ -69,6 +74,7 @@ type Service struct {
 	Users    Users
 	Category Category
 	Products Products
+	Log      Log
 }
 
 func NewService(deps *Deps) *Service {
@@ -78,5 +84,6 @@ func NewService(deps *Deps) *Service {
 		Users:    NewUsersService(deps.Repo.Users, deps.Config.Users, deps.TokenManager, deps.Hasher, deps.OtpGenerator, emailService),
 		Category: NewCategoryService(deps.Repo.Category),
 		Products: NewProductsService(deps.Repo.Products),
+		Log:      NewLogService(deps.Repo.Log),
 	}
 }

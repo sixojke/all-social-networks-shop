@@ -91,7 +91,8 @@ func (r *CategoryPostgres) CreateSubcategory(subcat *domain.Subcategory) (id int
 	INSERT INTO %s
 		(name, min_hold_time, category_id)
 	VALUES
-		($1, $2, $3)`, subcategory)
+		($1, $2, $3)
+	RETURNING id`, subcategory)
 
 	if err := r.db.QueryRow(query, subcat.Name, subcat.MinHoldTime, subcat.CategoryId).Scan(&id); err != nil {
 		return 0, fmt.Errorf("insert subcategory: %v", err)

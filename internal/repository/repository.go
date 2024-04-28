@@ -27,6 +27,11 @@ type Category interface {
 	GetSubcategories(categoryId int) (*[]domain.Subcategory, error)
 }
 
+type Log interface {
+	WriteAdminLog(log *domain.Log) error
+	GetAdminLogs(limit int, offset int) (*domain.Pagination, error)
+}
+
 type Products interface {
 	// Create(product *domain.Product) (int, error)
 	GetAll(filters *domain.ProductFilters) (*domain.Pagination, error)
@@ -44,6 +49,7 @@ type Repository struct {
 	Users    Users
 	Category Category
 	Products Products
+	Log      Log
 }
 
 func NewRepository(deps *Deps) *Repository {
@@ -51,5 +57,6 @@ func NewRepository(deps *Deps) *Repository {
 		Users:    NewUsersPostgres(deps.Postgres),
 		Category: NewCategoryPostgres(deps.Postgres),
 		Products: NewProductsPostgres(deps.Postgres),
+		Log:      NewLogPostgres(deps.Postgres),
 	}
 }

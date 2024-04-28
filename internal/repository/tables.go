@@ -13,6 +13,7 @@ const (
 	sessions     = "sessions"
 	category     = "category"
 	suppliers    = "suppliers"
+	adminLogs    = "admin_logs"
 	subcategory  = "subcategory"
 	bannedUsers  = "banned_users"
 	verification = "verification"

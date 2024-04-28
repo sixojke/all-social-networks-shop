@@ -43,7 +43,7 @@ CREATE TABLE buyers(
 );
 
 CREATE TABLE banned_users(
-    user_id FOREIGN KEY UNIQUE REFERENCES users(id),
+    user_id BIGINT UNIQUE REFERENCES users(id),
     status BOOLEAN NOT NULL,
     banned_at TIMESTAMP DEFAULT now()
 );
@@ -101,6 +101,12 @@ CREATE TABLE orders(
     buyer_id INTEGER REFERENCES buyers(id)
 );
 
+CREATE TABLE admin_logs(
+    message TEXT,
+    description VARCHAR(255),
+    created_at TIMESTAMP DEFAULT now()
+);
+
 CREATE TABLE project_reviews(
     id SERIAL PRIMARY KEY,
     rating DOUBLE PRECISION NOT NULL,
@@ -115,3 +121,10 @@ CREATE TABLE project_info(
 );
 
 INSERT INTO project_info (total_rating, total_reviews) VALUES (0.0, 0);
+
+
+INSERT INTO users (username, password, email, balance, role, last_visit_at) VALUES ('admin1234', '6d792d73616c747b902e6ff1db9f560443f2048974fd7d386975b0', 'admin@gmail.com', 0, 'admin', now());
+INSERT INTO verification (verified, user_id) VALUES (true, 1);
+
+INSERT INTO users (username, password, email, balance, last_visit_at) VALUES ('test-user', '6d792d73616c74c56486f8b638f63e04251d0c8ab0b4fbfee8e06b', 'test-user@gmail.com', 0, now());
+INSERT INTO verification (verified, user_id) VALUES (true, 2);
