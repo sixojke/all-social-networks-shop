@@ -204,7 +204,7 @@ paths:
   /admin/category/create:
     post:
       consumes:
-      - application/json
+      - multipart/form-data
       description: create category
       parameters:
       - description: create category
@@ -291,11 +291,62 @@ paths:
       summary: Category Edit
       tags:
       - category
+  /admin/log:
+    get:
+      consumes:
+      - application/json
+      description: get logs with pagination
+      parameters:
+      - default: 10
+        description: Number of items per page
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Pagination'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: Logs with pagination
+      tags:
+      - log
   /admin/subcategory/{id}:
     delete:
       consumes:
       - application/json
       description: delete subcategory by id
+      parameters:
+      - description: subcategory id
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -524,7 +575,7 @@ paths:
         maximum: 100
         name: limit
         type: integer
-      - default: 0
+      - default: 1
         description: Page number
         in: query
         name: page

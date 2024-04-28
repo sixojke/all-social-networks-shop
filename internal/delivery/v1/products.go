@@ -69,7 +69,7 @@ func (h *Handler) initProductsRoutes(api *gin.RouterGroup) {
 // @Accept  json
 // @Produce  json
 // @Param limit query int false "Number of items per page" default(10) maximum(100)
-// @Param page query int false "Page number" default(0)
+// @Param page query int false "Page number" default(1)
 // @Param category_id query int false "category_id"
 // @Param subcategory_id query int false "subcategory_id"
 // @Param is_available query int false "Product availability: enter 1 if true, 0 if false" default(0)
@@ -88,7 +88,7 @@ func (h *Handler) productsGetAll(c *gin.Context) {
 
 	page, err := processIntParam(c.Query("page"))
 	if err != nil {
-		page = 0
+		page = 1
 	}
 
 	categoryId, _ := processIntParam(c.Query("category_id"))
@@ -107,7 +107,7 @@ func (h *Handler) productsGetAll(c *gin.Context) {
 
 	products, err := h.services.Products.GetAll(&domain.ProductFilters{
 		Limit:         limit,
-		Offset:        page * limit,
+		Offset:        page*limit - limit,
 		CategoryId:    categoryId,
 		SubcategoryId: subcategoryId,
 		IsAvailable:   isAvailable,
