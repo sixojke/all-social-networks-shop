@@ -6,10 +6,12 @@ import (
 	"time"
 
 	"github.com/pquerna/otp/totp"
+	"github.com/xlzd/gotp"
 )
 
 type Generator interface {
 	RandomSecret() (string, error)
+	RandomSecretWithLength(length int) string
 }
 
 type GOTPGenerator struct{}
@@ -27,4 +29,8 @@ func (g *GOTPGenerator) RandomSecret() (string, error) {
 	}
 
 	return code, nil
+}
+
+func (g *GOTPGenerator) RandomSecretWithLength(length int) string {
+	return gotp.RandomSecret(length)
 }

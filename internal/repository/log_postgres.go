@@ -52,6 +52,15 @@ func (r *LogPostgres) GetAdminLogs(limit int, offset int) (*domain.Pagination, e
 		return nil, fmt.Errorf("select count items: %v", err)
 	}
 
+	return &domain.Pagination{
+		Data:       logs,
+		Limit:      limit,
+		TotalItems: totalItems,
+		TotalPages: getPages(totalItems, limit),
+	}, nil
+}
+
+func getPages(totalItems, limit int) int {
 	totalPages := 0
 	if totalItems%limit == 0 {
 		totalPages = totalItems / limit
@@ -59,10 +68,5 @@ func (r *LogPostgres) GetAdminLogs(limit int, offset int) (*domain.Pagination, e
 		totalPages = totalItems/limit + 1
 	}
 
-	return &domain.Pagination{
-		Data:       logs,
-		Limit:      limit,
-		TotalItems: totalItems,
-		TotalPages: totalPages,
-	}, nil
+	return totalPages
 }

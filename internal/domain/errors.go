@@ -9,6 +9,7 @@ var (
 	ErrDuplicateKey            = errors.New("dublicate key")
 	ErrUserNotVerified         = errors.New("user is not verified")
 	ErrProductsNotFound        = errors.New("products not found")
+	ErrDataNotFound            = errors.New("data not found")
 	ErrCategoriesNotFound      = errors.New("categories not found")
 	ErrSubcategoriesNotFound   = errors.New("subcategories not found")
 )

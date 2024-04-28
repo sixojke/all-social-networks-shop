@@ -81,15 +81,7 @@ func (h *Handler) initProductsRoutes(api *gin.RouterGroup) {
 // @Failure default {object} response
 // @Router /products [get]
 func (h *Handler) productsGetAll(c *gin.Context) {
-	limit, err := processIntParam(c.Query("limit"))
-	if err != nil {
-		limit = h.config.Pagination.DefaultLimit
-	}
-
-	page, err := processIntParam(c.Query("page"))
-	if err != nil {
-		page = 1
-	}
+	limit, offset := h.getLimitAndOffset(c)
 
 	categoryId, _ := processIntParam(c.Query("category_id"))
 
@@ -101,13 +93,9 @@ func (h *Handler) productsGetAll(c *gin.Context) {
 
 	sortDefect := c.Query("sort_defect")
 
-	if limit > h.config.Pagination.MaxLimit {
-		limit = h.config.Pagination.MaxLimit
-	}
-
 	products, err := h.services.Products.GetAll(&domain.ProductFilters{
 		Limit:         limit,
-		Offset:        page*limit - limit,
+		Offset:        offset,
 		CategoryId:    categoryId,
 		SubcategoryId: subcategoryId,
 		IsAvailable:   isAvailable,

@@ -120,6 +120,13 @@ CREATE TABLE project_info(
     total_reviews INTEGER NOT NULL
 );
 
+CREATE TABLE referral_system(
+    referral_code VARCHAR(255) UNIQUE NOT NULL,
+    total_visitors BIGINT NOT NULL DEFAULT 0,
+    description VARCHAR(127)
+    created_at TIMESTAMP DEFAULT now()
+);
+
 INSERT INTO project_info (total_rating, total_reviews) VALUES (0.0, 0);
 
 

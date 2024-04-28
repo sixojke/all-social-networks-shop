@@ -30,7 +30,26 @@ func (h *Handler) Init(api *gin.RouterGroup) {
 		h.initAdminRouter(v1)
 		h.initUsersRoutes(v1)
 		h.initProductsRoutes(v1)
+		h.initReferralSystemRoutes(v1)
 	}
+}
+
+func (h *Handler) getLimitAndOffset(c *gin.Context) (limit int, offset int) {
+	limit, err := processIntParam(c.Query("limit"))
+	if err != nil {
+		limit = h.config.Pagination.DefaultLimit
+	}
+
+	page, err := processIntParam(c.Query("page"))
+	if err != nil {
+		page = 1
+	}
+
+	if limit > h.config.Pagination.MaxLimit {
+		limit = h.config.Pagination.MaxLimit
+	}
+
+	return limit, page*limit - limit
 }
 
 func processIntParam(param string) (int, error) {

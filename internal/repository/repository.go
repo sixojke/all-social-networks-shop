@@ -27,6 +27,13 @@ type Category interface {
 	GetSubcategories(categoryId int) (*[]domain.Subcategory, error)
 }
 
+type ReferralSystem interface {
+	CreateCode(ref domain.ReferralSystem) error
+	AddVisitor(referralCode string) error
+	GetStats(limit, offset int) (*domain.Pagination, error)
+	DeleteCode(referralCode string) error
+}
+
 type Log interface {
 	WriteAdminLog(log *domain.Log) error
 	GetAdminLogs(limit int, offset int) (*domain.Pagination, error)
@@ -46,17 +53,19 @@ type Deps struct {
 }
 
 type Repository struct {
-	Users    Users
-	Category Category
-	Products Products
-	Log      Log
+	Users          Users
+	Category       Category
+	Products       Products
+	ReferralSystem ReferralSystem
+	Log            Log
 }
 
 func NewRepository(deps *Deps) *Repository {
 	return &Repository{
-		Users:    NewUsersPostgres(deps.Postgres),
-		Category: NewCategoryPostgres(deps.Postgres),
-		Products: NewProductsPostgres(deps.Postgres),
-		Log:      NewLogPostgres(deps.Postgres),
+		Users:          NewUsersPostgres(deps.Postgres),
+		Category:       NewCategoryPostgres(deps.Postgres),
+		Products:       NewProductsPostgres(deps.Postgres),
+		ReferralSystem: NewReferralLinksPostgres(deps.Postgres),
+		Log:            NewLogPostgres(deps.Postgres),
 	}
 }
