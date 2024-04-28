@@ -14,11 +14,15 @@ type Props = {
   setErrorContent: () => void;
   setContentType: (content: ContentType) => void;
   setUserId: (userId: number) => void;
+  setPassword: (value: string) => void;
+  setLogin: (value: string) => void;
 };
 
 export const SignUpContent: FC<Props> = ({
   setContentType,
   setUserId,
+  setLogin,
+  setPassword,
   setErrorContent,
 }) => {
   const [signUp] = useSignUpMutation();
@@ -43,6 +47,8 @@ export const SignUpContent: FC<Props> = ({
       .unwrap()
       .then((res) => {
         setUserId(res.id);
+        setPassword(data.password as string);
+        setLogin(data.login as string);
         setContentType("verify");
       })
       .catch(() => {

@@ -1,5 +1,5 @@
 import { DotLoader } from "react-spinners";
 
 export const Loader = () => {
-  return <DotLoader color="#018476" />;
+  return <DotLoader color="#262626" />;
 };

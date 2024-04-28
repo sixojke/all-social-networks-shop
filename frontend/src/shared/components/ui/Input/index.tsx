@@ -66,7 +66,7 @@ export const Input: FC<Props> = forwardRef(
         )}
         <input
           className={classNames(
-            "outline-none placeholder-main-dark-green text-main-dark-green !bg-opacity-0 caret-main-green-gray w-full !rounded-none",
+            "outline-none placeholder-main-dark-green text-main-dark-green caret-main-green-gray w-full !rounded-none !bg-[#ff000000]",
             className
           )}
           ref={ref}

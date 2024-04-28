@@ -10,6 +10,7 @@ import { Pagination } from "@/shared/components/ui/Pagination";
 import { AdBlock } from "../components/AdBlock";
 import { Footer } from "../components/Footer";
 import { useGetAllCategoriesQuery } from "@/entities/categories";
+import { useDispatch } from "react-redux";
 
 export const CatalogPageLayout = () => {
   const [filters, setFilters] = useState<IGetAllProductsRequest>({});

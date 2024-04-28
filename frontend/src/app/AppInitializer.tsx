@@ -7,18 +7,22 @@ type Props = {
 
 export const AppInitializer: FC<Props> = ({ children }) => {
   const [getNewToken] = useCheckRefreshTokenMutation();
+  const refresh = () => {
+    const refresh_token = localStorage.getItem("refreshToken");
+    if (refresh_token) {
+      getNewToken({ refresh_token })
+        .unwrap()
+        .then((res) => {
+          localStorage.setItem("accessToken", res.accessToken);
+          localStorage.setItem("refreshToken", res.refreshToken);
+        });
+    }
+  };
   useEffect(() => {
+    refresh();
     setTimeout(() => {
-      const refresh_token = localStorage.getItem("refreshToken");
-      if (refresh_token) {
-        getNewToken({ refresh_token })
-          .unwrap()
-          .then((res) => {
-            localStorage.setItem("accessToken", res.accessToken);
-            localStorage.setItem("refreshToken", res.refreshToken);
-          });
-      }
+      refresh();
     }, 600000);
-  });
+  }, []);
   return <>{children}</>;
 };

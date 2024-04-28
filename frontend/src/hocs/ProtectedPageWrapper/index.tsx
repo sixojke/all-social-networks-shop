@@ -9,7 +9,7 @@ type Props = {
   children: ReactNode;
 };
 
-export const ProtectedComponent: FC<Props> = ({ children }) => {
+export const ProtectedPageWrapper: FC<Props> = ({ children }) => {
   const [isAuth, setIsAuth] = useState(false);
   const router = useRouter();
   const modalContext = useContext(ModalContext);
