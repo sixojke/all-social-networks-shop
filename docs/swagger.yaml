@@ -59,10 +59,21 @@ definitions:
     properties:
       id: {}
     type: object
+  v1.linkResponse:
+    properties:
+      link:
+        type: string
+    type: object
   v1.paginationResponse:
     properties:
       pagination:
         $ref: '#/definitions/domain.Pagination'
+    type: object
+  v1.referralSystemCreateLinkInp:
+    properties:
+      description:
+        maxLength: 127
+        type: string
     type: object
   v1.refreshTokenInp:
     properties:
@@ -314,7 +325,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.Pagination'
+            $ref: '#/definitions/v1.paginationResponse'
         "400":
           description: Bad Request
           schema:
@@ -336,6 +347,130 @@ paths:
       summary: Logs with pagination
       tags:
       - log
+  /admin/referral-system/{code}:
+    delete:
+      consumes:
+      - application/json
+      description: delete referral code
+      parameters:
+      - description: referral code
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: Referral System Delete Code
+      tags:
+      - referral-system
+  /admin/referral-system/create-code:
+    post:
+      consumes:
+      - application/json
+      description: create referral code
+      parameters:
+      - description: description for referral link
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.referralSystemCreateLinkInp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.linkResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: Referral code create
+      tags:
+      - referral-system
+  /admin/referral-system/stats:
+    get:
+      consumes:
+      - application/json
+      description: get statistics on the referral system
+      parameters:
+      - default: 10
+        description: Number of items per page
+        in: query
+        maximum: 100
+        name: limit
+        type: integer
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.paginationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: Referral System Stats
+      tags:
+      - referral-system
   /admin/subcategory/{id}:
     delete:
       consumes:
@@ -627,6 +762,42 @@ paths:
       summary: Products with filters
       tags:
       - products
+  /referral-system/visitor:
+    post:
+      consumes:
+      - application/json
+      description: add a visitor using a referral code
+      parameters:
+      - description: referral code
+        in: query
+        name: referral_code
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: Referral System Add Visitor
+      tags:
+      - referral-system
   /user:
     get:
       consumes:

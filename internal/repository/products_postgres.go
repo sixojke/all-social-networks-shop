@@ -117,23 +117,16 @@ func (r *ProductsPostgres) GetAll(filters *domain.ProductFilters) (*domain.Pagin
 		query += "WHERE " + strings.Join(where, "AND ")
 	}
 
-	var rows int
-	if err := r.db.QueryRow(query, whereArgs...).Scan(&rows); err != nil {
+	var totalItems int
+	if err := r.db.QueryRow(query, whereArgs...).Scan(&totalItems); err != nil {
 		return nil, fmt.Errorf("error select count rows: %v", err)
-	}
-
-	totalPages := 0
-	if rows%filters.Limit == 0 {
-		totalPages = rows / filters.Limit
-	} else {
-		totalPages = rows/filters.Limit + 1
 	}
 
 	return &domain.Pagination{
 		Data:       p,
-		TotalItems: rows,
+		TotalItems: totalItems,
 		Limit:      filters.Limit,
-		TotalPages: totalPages,
+		TotalPages: getPages(totalItems, filters.Limit),
 	}, nil
 }
 

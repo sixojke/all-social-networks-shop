@@ -70,7 +70,8 @@ type Pagination struct {
 }
 
 type Service struct {
-	Users UsersService `mapstructure:"users"`
+	Users          UsersService          `mapstructure:"users"`
+	ReferralSystem ReferralSystemService `mapstructure:"referral_system"`
 }
 
 type UsersService struct {
@@ -85,6 +86,10 @@ type Auth struct {
 type JWT struct {
 	AccessTokenTTL  time.Duration `mapstructure:"access_token_ttl"`
 	RefreshTokenTTL time.Duration `mapstructure:"refresh_token_ttl"`
+}
+
+type ReferralSystemService struct {
+	CodeLength int `mapstructure:"code_length"`
 }
 
 type Payok struct {

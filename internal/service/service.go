@@ -47,6 +47,13 @@ type Category interface {
 	GetSubcategories(categoryId int) (*[]domain.Subcategory, error)
 }
 
+type ReferralSystem interface {
+	CreateCode(description string) (link string, err error)
+	AddVisitor(referralCode string) error
+	GetStats(limit, offset int) (*domain.Pagination, error)
+	DeleteCode(referralCode string) error
+}
+
 type Log interface {
 	WriteAdminLog(log *domain.Log) error
 	GetAdminLogs(limit, offset int) (*domain.Pagination, error)
@@ -71,19 +78,21 @@ type Deps struct {
 }
 
 type Service struct {
-	Users    Users
-	Category Category
-	Products Products
-	Log      Log
+	Users          Users
+	Category       Category
+	Products       Products
+	ReferralSystem ReferralSystem
+	Log            Log
 }
 
 func NewService(deps *Deps) *Service {
 	emailService := NewEmailService(deps.EmailSender)
 
 	return &Service{
-		Users:    NewUsersService(deps.Repo.Users, deps.Config.Users, deps.TokenManager, deps.Hasher, deps.OtpGenerator, emailService),
-		Category: NewCategoryService(deps.Repo.Category),
-		Products: NewProductsService(deps.Repo.Products),
-		Log:      NewLogService(deps.Repo.Log),
+		Users:          NewUsersService(deps.Repo.Users, deps.Config.Users, deps.TokenManager, deps.Hasher, deps.OtpGenerator, emailService),
+		Category:       NewCategoryService(deps.Repo.Category),
+		Products:       NewProductsService(deps.Repo.Products),
+		ReferralSystem: NewReferralSystemService(deps.Repo.ReferralSystem, deps.Config.ReferralSystem, deps.OtpGenerator),
+		Log:            NewLogService(deps.Repo.Log),
 	}
 }

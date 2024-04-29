@@ -20,6 +20,10 @@ type idResponse struct {
 	ID interface{} `json:"id"`
 }
 
+type linkResponse struct {
+	Link string `json:"link"`
+}
+
 type response struct {
 	Message string `json:"message"`
 }

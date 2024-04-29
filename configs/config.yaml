@@ -40,6 +40,8 @@ service:
       jwt:
         access_token_ttl: 15m
         refresh_token_ttl: 14400m
+  referral_system:
+    code_length: 32
 
 handler:
   pagination:

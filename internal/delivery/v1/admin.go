@@ -31,6 +31,13 @@ func (h *Handler) initAdminRouter(api *gin.RouterGroup) {
 			userManagement.PATCH("/ban", h.userManagementBan)
 		}
 
+		referralSystem := admin.Group("/referral-system")
+		{
+			referralSystem.GET("/stats", h.referralSystemStats)
+			referralSystem.POST("/create-code", h.referralSystemCreateCode)
+			referralSystem.DELETE("/:code", h.referralSystemDeleteCode)
+		}
+
 		log := admin.Group("/log")
 		{
 			log.GET("", h.adminLogs)
@@ -352,41 +359,122 @@ func (h *Handler) userManagementBan(c *gin.Context) {
 	c.JSON(http.StatusOK, response{Message: "success"})
 }
 
-// @Summary Logs with pagination
+// @Summary Referral System Stats
 // @Security UsersAuth
-// @Tags log
-// @Description get logs with pagination
-// @ModuleID userManagementBan
+// @Tags referral-system
+// @Description get statistics on the referral system
+// @ModuleID referralSystemStats
 // @Accept  json
 // @Produce  json
 // @Param limit query int false "Number of items per page" default(10) maximum(100)
 // @Param page query int false "Page number" default(1)
-// @Success 200 {object} domain.Pagination
+// @Success 200 {object} paginationResponse
 // @Failure 400,404 {object} response
 // @Failure 500 {object} response
 // @Failure default {object} response
-// @Router /admin/log [get]
-func (h *Handler) adminLogs(c *gin.Context) {
-	limit, err := processIntParam(c.Query("limit"))
-	if err != nil {
-		limit = h.config.Pagination.DefaultLimit
-	}
+// @Router /admin/referral-system/stats [get]
+func (h *Handler) referralSystemStats(c *gin.Context) {
+	limit, offset := h.getLimitAndOffset(c)
 
-	page, err := processIntParam(c.Query("page"))
-	if err != nil {
-		page = 1
-	}
-
-	if limit > h.config.Pagination.MaxLimit {
-		limit = h.config.Pagination.MaxLimit
-	}
-
-	logs, err := h.services.Log.GetAdminLogs(limit, page*limit-limit)
+	stats, err := h.services.ReferralSystem.GetStats(limit, offset)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return
 	}
 
-	c.JSON(http.StatusOK, logs)
+	c.JSON(http.StatusOK, paginationResponse{Pagination: stats})
+}
+
+type referralSystemCreateLinkInp struct {
+	Description string `json:"description" binding:"max=127"`
+}
+
+// @Summary Referral code create
+// @Security UsersAuth
+// @Tags referral-system
+// @Description create referral code
+// @ModuleID referralSystemCreateLink
+// @Accept  json
+// @Produce  json
+// @Param input body referralSystemCreateLinkInp true "description for referral link"
+// @Success 200 {object} linkResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admin/referral-system/create-code [post]
+func (h *Handler) referralSystemCreateCode(c *gin.Context) {
+	var inp referralSystemCreateLinkInp
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	link, err := h.services.ReferralSystem.CreateCode(inp.Description)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, linkResponse{Link: link})
+}
+
+// @Summary Referral System Delete Code
+// @Security UsersAuth
+// @Tags referral-system
+// @Description delete referral code
+// @ModuleID referralSystemDeleteCode
+// @Accept  json
+// @Produce  json
+// @Param code path string true "referral code"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admin/referral-system/{code} [delete]
+func (h *Handler) referralSystemDeleteCode(c *gin.Context) {
+	referralCode := c.Param("code")
+
+	if referralCode == "" {
+		newResponse(c, http.StatusBadRequest, "referral code is empty")
+
+		return
+	}
+
+	if err := h.services.ReferralSystem.DeleteCode(referralCode); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, response{Message: "success"})
+}
+
+// @Summary Logs with pagination
+// @Security UsersAuth
+// @Tags log
+// @Description get logs with pagination
+// @ModuleID adminLogsGet
+// @Accept  json
+// @Produce  json
+// @Param limit query int false "Number of items per page" default(10) maximum(100)
+// @Param page query int false "Page number" default(1)
+// @Success 200 {object} paginationResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /admin/log [get]
+func (h *Handler) adminLogs(c *gin.Context) {
+	limit, offset := h.getLimitAndOffset(c)
+
+	logs, err := h.services.Log.GetAdminLogs(limit, offset)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, paginationResponse{Pagination: logs})
 }
