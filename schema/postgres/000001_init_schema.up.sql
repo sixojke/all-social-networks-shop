@@ -123,7 +123,7 @@ CREATE TABLE project_info(
 CREATE TABLE referral_system(
     referral_code VARCHAR(255) UNIQUE NOT NULL,
     total_visitors BIGINT NOT NULL DEFAULT 0,
-    description VARCHAR(127)
+    description VARCHAR(127),
     created_at TIMESTAMP DEFAULT now()
 );
 
