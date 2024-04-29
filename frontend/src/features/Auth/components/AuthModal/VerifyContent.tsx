@@ -4,20 +4,31 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { FormProvider, useForm } from "react-hook-form";
 import { VerifyFormValues, verifySchema } from "../../constants/verify";
 import { FC, useContext } from "react";
-import { useSignUpVerifyMutation } from "../../service";
+import { useSignInMutation, useSignUpVerifyMutation } from "../../service";
 import { ModalContext } from "@/shared/contexts/Modal";
+import { SignInResponse } from "../../types";
+import { useRouter } from "next/navigation";
 
 type Props = {
   userId: number;
+  login: string;
+  password: string;
   setErrorContent: () => void;
 };
 
-export const VerifyContent: FC<Props> = ({ userId, setErrorContent }) => {
+export const VerifyContent: FC<Props> = ({
+  userId,
+  setErrorContent,
+  login,
+  password,
+}) => {
+  const router = useRouter();
   const modalContext = useContext(ModalContext);
   const onHide = () => {
     modalContext?.hideModal();
   };
   const [verify] = useSignUpVerifyMutation();
+  const [signIn] = useSignInMutation();
   const defaultValues: VerifyFormValues = {
     code: null,
     id: userId,
@@ -32,7 +43,19 @@ export const VerifyContent: FC<Props> = ({ userId, setErrorContent }) => {
     verify({ id: userId, code: data.code as string })
       .unwrap()
       .then(() => {
-        onHide();
+        signIn({
+          password: password,
+          username: login,
+        })
+          .unwrap()
+          .then((res: SignInResponse) => {
+            localStorage.setItem("accessToken", res.accessToken);
+            localStorage.setItem("refreshToken", res.refreshToken);
+            router.refresh();
+          })
+          .catch(() => {
+            setErrorContent();
+          });
       })
       .catch(() => {
         setErrorContent();

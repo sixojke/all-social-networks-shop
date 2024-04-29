@@ -28,6 +28,8 @@ const TITLES = {
 
 export const AuthModal = () => {
   const modalContext = useContext(ModalContext);
+  const [login, setLogin] = useState<string | null>(null);
+  const [password, setPassword] = useState<string | null>(null);
   const onHide = () => {
     modalContext?.hideModal();
   };
@@ -47,6 +49,8 @@ export const AuthModal = () => {
       case "signUp":
         return (
           <SignUpContent
+            setLogin={setLogin}
+            setPassword={setPassword}
             setErrorContent={setErrorContent}
             setUserId={setUserId}
             setContentType={setContentType}
@@ -58,8 +62,15 @@ export const AuthModal = () => {
 
       case "verify":
         return (
-          isNumber(userId) && (
-            <VerifyContent setErrorContent={setErrorContent} userId={userId} />
+          isNumber(userId) &&
+          login &&
+          password && (
+            <VerifyContent
+              login={login}
+              password={password}
+              setErrorContent={setErrorContent}
+              userId={userId}
+            />
           )
         );
 

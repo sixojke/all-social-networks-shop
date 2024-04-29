@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import { ComponentProps, FC, forwardRef } from "react";
-import searchIconImage from "@/assets/icons/search-gray.svg";
-import Image from "next/image";
+import SearchIconImage from "@/assets/icons/search-gray.svg";
 
 type Props = {
   border?: boolean;
@@ -30,16 +29,16 @@ export const Input: FC<Props> = forwardRef(
         className={classNames(
           "bg-main-light-gray",
           "placeholder-main-light-green",
-          "text-[18px]",
+          "text-[0.938vw]",
           "flex",
           "items-center",
           "p-0",
           "transition",
-          "px-[20px]",
+          "px-[1.042vw]",
           "font-normal",
-          "h-12",
-          "py-[4.5px]",
-          "rounded-[10px]",
+          "h-[2.5vw]",
+          "py-[0.234vw]",
+          "rounded-[0.521vw]",
           "gap-x-3",
           "select-none",
           "w-full",
@@ -55,18 +54,10 @@ export const Input: FC<Props> = forwardRef(
           wrapperClassname
         )}
       >
-        {searchIcon && (
-          <Image
-            className="fill-main-error-red"
-            alt=""
-            src={searchIconImage}
-            width={15}
-            height={15}
-          />
-        )}
+        {searchIcon && <SearchIconImage />}
         <input
           className={classNames(
-            "outline-none placeholder-main-dark-green text-main-dark-green !bg-opacity-0 caret-main-green-gray w-full !rounded-none",
+            "outline-none placeholder-main-dark-green text-main-dark-green caret-main-green-gray w-full !rounded-none !bg-[#ff000000]",
             className
           )}
           ref={ref}

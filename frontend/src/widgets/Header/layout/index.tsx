@@ -10,12 +10,12 @@ export const HeaderLayout = () => {
   const logout = useLogout();
   return (
     <header className="flex flex-col gap-y-8">
-      <section className="flex px-10 gap-x-5 w-full fixed bg-[#FFFFFF] pt-8 z-50 pb-3 items-center">
+      <section className="flex px-10 gap-x-5 w-full fixed bg-[#FFFFFF] pt-8 z-40 pb-3 items-center">
         <Button className="bg-main-dark-green">PShop</Button>
         <ButtonText className="text-main-dark-green">Фильтр</ButtonText>
         <Input
           wrapperClassname="!border-main-black !bg-main-light-gray !border-solid !border-opacity-20 !border-[0.5px]"
-          className="!bg-main-light-gray !text-main-black !bg-opacity-60  !placeholder-main-dark-gray"
+          className="!text-main-black !placeholder-main-dark-gray"
           searchIcon
           placeholder="Поиск"
         />

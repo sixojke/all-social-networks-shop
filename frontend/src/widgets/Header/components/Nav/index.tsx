@@ -1,7 +1,7 @@
 import { Button } from "@/shared/components/ui/Buttons/Button";
 import { ButtonText } from "@/shared/components/ui/Buttons/ButtonText";
-import supplierIcon from "@/assets/icons/supplier.svg";
-import bottomArrowIcon from "@/assets/icons/arrow-bottom.svg";
+import supplierIconUrl from "@/assets/icons/supplier.svg?url";
+import bottomArrowIcon from "@/assets/icons/arrow-bottom.svg?url";
 import Image from "next/image";
 
 export const Nav = () => {
@@ -29,7 +29,7 @@ export const Nav = () => {
           <Button className="bg-main-dark-green">
             <div className="flex items-center gap-x-3">
               Для поставщиков
-              <Image alt="" src={supplierIcon} height={21} width={21} />
+              <Image alt="" src={supplierIconUrl} height={21} width={21} />
             </div>
           </Button>
         </li>
