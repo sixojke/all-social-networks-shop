@@ -23,7 +23,7 @@ export const Navbar = () => {
         }}
         disableUnderline
       >
-        {Object.keys(TABS).map((key) => {
+        {Object.keys(TABS).map((key, index) => {
           const targetTabInfo = TABS[key as keyof typeof TABS];
           return (
             <Tab
@@ -35,7 +35,9 @@ export const Navbar = () => {
                   color: "#262626",
                   fontWeight: "600",
                   path: {
-                    fill: "#262626",
+                    ...(index === 1
+                      ? { stroke: "black" }
+                      : { fill: "#262626" }),
                   },
                 },
                 [`&.${tabClasses.root}`]: {
@@ -52,7 +54,9 @@ export const Navbar = () => {
                   color: "#262626",
                   path: {
                     transitionDuration: "0.3s",
-                    fill: "#262626",
+                    ...(index === 1
+                      ? { stroke: "black" }
+                      : { fill: "#262626" }),
                   },
                 },
               }}
