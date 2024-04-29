@@ -1,25 +1,22 @@
 import { TABS } from "../../constants/tabs";
 import TabList from "@mui/joy/TabList";
 import Tab, { tabClasses } from "@mui/joy/Tab";
-import Grow from "@mui/material/Grow";
-import { useState } from "react";
-import classNames from "classnames";
 
 export const Navbar = () => {
-  const [activeTab, setActiveTab] = useState<string>("appSettings");
   return (
-    <nav className="h-full bg-white pt-8">
-      <p className="flex flex-col text-2xl pl-8">
+    <nav className="h-full bg-white pt-[1.667vw]">
+      <p className=" text-[0.99vw] leading-[1.042vw] pl-[1.667vw]">
         <span className="font-bold">Admin</span>
+        <br />
         <span>Panel</span>
       </p>
       <TabList
         sx={{
-          marginTop: "32px",
+          marginTop: "1.146vw",
           borderTop: "solid 1px #F4F7FE",
-          paddingTop: "38px",
-          width: "270px",
-          rowGap: "10px",
+          paddingTop: "1.563vw",
+          width: "11.302vw",
+          rowGap: "0.521vw",
         }}
         disableUnderline
       >
@@ -39,14 +36,20 @@ export const Navbar = () => {
                       ? { stroke: "black" }
                       : { fill: "#262626" }),
                   },
+                  ["line"]: {
+                    visibility: "visible !important",
+                  },
                 },
                 [`&.${tabClasses.root}`]: {
-                  height: "27px",
+                  height: "1.406vw",
                   padding: "0",
-                  paddingLeft: "24px",
+                  paddingLeft: "1.25vw",
                 },
                 [`&.${tabClasses.root}:after`]: {
-                  display: "none",
+                  width: "0.156vw",
+                  height: "1.406vw",
+                  borderRadius: "0.938vw",
+                  transition: "0.5s",
                 },
                 [`&.${tabClasses.root}:hover`]: {
                   transitionDuration: "0.3s",
@@ -63,28 +66,11 @@ export const Navbar = () => {
               key={targetTabInfo.value}
               value={targetTabInfo.value}
             >
-              <div
-                onClick={() => setActiveTab(targetTabInfo.value)}
-                className="flex items-center gap-x-3 justify-between w-full"
-              >
-                <div className="flex items-center gap-x-4">
-                  <targetTabInfo.icon />
-                  <span>{targetTabInfo.label}</span>
+              <div className="flex items-center gap-x-3 justify-between w-full">
+                <div className="flex items-center gap-x-[12px]">
+                  <targetTabInfo.icon/>
+                  <span className="text-[0.625vw]">{targetTabInfo.label}</span>
                 </div>
-                <Grow
-                  in={targetTabInfo.value === activeTab}
-                  style={{ transformOrigin: "0 0 0" }}
-                  timeout={300}
-                >
-                  <div
-                    className={classNames(
-                      "w-[3px] h-[27px] bg-[#262626] rounded-[17px]",
-                      {
-                        ["invisible"]: targetTabInfo.value !== activeTab,
-                      }
-                    )}
-                  />
-                </Grow>
               </div>
             </Tab>
           );

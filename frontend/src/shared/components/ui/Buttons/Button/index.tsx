@@ -18,19 +18,20 @@ export const Button: FC<Props> = ({
       className={classNames(
         "bg-main-black",
         "text-main-white",
-        "rounded-[10px]",
-        "text-[18px]",
+        "rounded-[0.521vw]",
+        "text-[0.938vw]",
         "p-0",
         "duration-150",
-        "px-[20px]",
+        "px-[1.042vw]",
         "font-semibold",
-        "py-[10px]",
+        "py-[0.521vw]",
         "select-none",
         {
           ["active:brightness-125"]: !disabled,
           ["hover:brightness-90"]: !disabled,
           ["border-solid border-main-dark-gray border-opacity-30 border-[1px]"]: border,
           ["border-none"]: !border,
+          ["opacity-60"]: disabled,
         },
         className
       )}

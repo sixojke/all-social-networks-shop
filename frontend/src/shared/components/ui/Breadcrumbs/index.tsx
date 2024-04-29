@@ -10,7 +10,7 @@ type Props = {
 
 export const Breadcrumbs: FC<Props> = ({ breadcrumbs }) => {
   return (
-    <div className="text-main-dark-gray flex text-sm gap-x-1">
+    <div className="text-main-dark-gray flex text-[0.729vw] gap-x-[0.208vw]">
       {breadcrumbs.map((item, index) => (
         <p key={item.id} onClick={item.onClick}>
           <span className="select-none">{index > 0 && "/ "}</span>

@@ -11,9 +11,9 @@ export const TABS = {
     value: "appSettings",
     label: "Настройки сайта",
   },
-  referals: {
+  referrals: {
     icon: ReferalIcon,
-    value: "referals",
+    value: "referrals",
     label: "Реферальные ссылки",
   },
   products: {

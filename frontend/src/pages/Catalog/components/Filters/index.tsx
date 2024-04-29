@@ -10,7 +10,7 @@ import { IGetAllProductsRequest } from "@/entities/products";
 import { FC, useEffect } from "react";
 import { IOption } from "@/shared/components/ui/CustomSelect/select.types";
 import { transformFormFiltersToRequest } from "../../helpers";
-import searchIcon from "@/assets/icons/search.svg";
+import searchIcon from "@/assets/icons/search.svg?url";
 import Image from "next/image";
 
 type Props = {
