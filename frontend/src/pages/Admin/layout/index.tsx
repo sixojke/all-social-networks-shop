@@ -6,7 +6,7 @@ import Tabs from "@mui/joy/Tabs";
 export const AdminLayout = () => {
   // After backend fix, replace React empty Fragment to ProtectedPageWrapper
   return (
-    <>
+    <ProtectedPageWrapper>
       <div className="flex w-full overflow-x-hidden h-screen overflow-y-hidden absolute top-0 z-50">
         <Tabs defaultValue={"appSettings"} orientation="vertical">
           <Navbar />
@@ -15,6 +15,6 @@ export const AdminLayout = () => {
           </div>
         </Tabs>
       </div>
-    </>
+    </ProtectedPageWrapper>
   );
 };

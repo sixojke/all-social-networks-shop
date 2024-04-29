@@ -4,8 +4,6 @@ import Tab, { tabClasses } from "@mui/joy/Tab";
 import Grow from "@mui/material/Grow";
 import { useState } from "react";
 import classNames from "classnames";
-import { motion, AnimatePresence } from "framer-motion";
-import { useDomIsLoaded } from "@/hooks/useDomIsLoaded";
 
 export const Navbar = () => {
   const [activeTab, setActiveTab] = useState<string>("appSettings");
@@ -20,7 +18,7 @@ export const Navbar = () => {
           marginTop: "32px",
           borderTop: "solid 1px #F4F7FE",
           paddingTop: "38px",
-          width: "210px",
+          width: "270px",
           rowGap: "10px",
         }}
         disableUnderline
@@ -65,16 +63,24 @@ export const Navbar = () => {
                 onClick={() => setActiveTab(targetTabInfo.value)}
                 className="flex items-center gap-x-3 justify-between w-full"
               >
-                <targetTabInfo.icon />
-                <span>{targetTabInfo.label}</span>
-                <div
-                  className={classNames(
-                    "w-[3px] h-[27px] bg-[#262626] rounded-[17px]",
-                    {
-                      ["invisible"]: targetTabInfo.value !== activeTab,
-                    }
-                  )}
-                />
+                <div className="flex items-center gap-x-4">
+                  <targetTabInfo.icon />
+                  <span>{targetTabInfo.label}</span>
+                </div>
+                <Grow
+                  in={targetTabInfo.value === activeTab}
+                  style={{ transformOrigin: "0 0 0" }}
+                  timeout={300}
+                >
+                  <div
+                    className={classNames(
+                      "w-[3px] h-[27px] bg-[#262626] rounded-[17px]",
+                      {
+                        ["invisible"]: targetTabInfo.value !== activeTab,
+                      }
+                    )}
+                  />
+                </Grow>
               </div>
             </Tab>
           );
