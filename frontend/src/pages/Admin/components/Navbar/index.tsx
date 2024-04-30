@@ -1,8 +1,10 @@
 import { TABS } from "../../constants/tabs";
 import TabList from "@mui/joy/TabList";
 import Tab, { tabClasses } from "@mui/joy/Tab";
+import { useGetPermissionTabs } from "../../hooks";
 
 export const Navbar = () => {
+  const permissionTabs = useGetPermissionTabs(TABS);
   return (
     <nav className="h-full bg-white pt-[1.667vw]">
       <p className=" text-[0.99vw] leading-[1.042vw] pl-[1.667vw]">
@@ -20,7 +22,7 @@ export const Navbar = () => {
         }}
         disableUnderline
       >
-        {Object.keys(TABS).map((key, index) => {
+        {Object.keys(permissionTabs ?? {})?.map((key, index) => {
           const targetTabInfo = TABS[key as keyof typeof TABS];
           return (
             <Tab
@@ -68,7 +70,7 @@ export const Navbar = () => {
             >
               <div className="flex items-center gap-x-3 justify-between w-full">
                 <div className="flex items-center gap-x-[12px]">
-                  <targetTabInfo.icon/>
+                  <targetTabInfo.icon />
                   <span className="text-[0.625vw]">{targetTabInfo.label}</span>
                 </div>
               </div>
