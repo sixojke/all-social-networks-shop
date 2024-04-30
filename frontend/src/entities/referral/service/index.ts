@@ -13,7 +13,7 @@ const referalApi = rootApi.injectEndpoints({
   endpoints: (build) => ({
     addVisitor: build.mutation<void, IAddVisitorRequest>({
       query: (data) => ({
-        url: "/referal-system/visitor",
+        url: "/referral-system/visitor",
         method: "POST",
         params: data,
       }),

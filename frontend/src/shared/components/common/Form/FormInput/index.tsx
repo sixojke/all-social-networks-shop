@@ -26,7 +26,7 @@ export const FormInput: FC<Props> = ({
     formState: { errors },
   } = useFormContext();
   return (
-    <div className="flex flex-col w-full h-[3.646vw]">
+    <div className="flex flex-col w-full]">
       <Input
         error={getFieldState(name).invalid}
         className={className}

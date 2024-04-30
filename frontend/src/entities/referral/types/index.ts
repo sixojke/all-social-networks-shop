@@ -20,10 +20,15 @@ export interface IGetStatsRequest {
 }
 
 export interface IGetStatsResponse {
-  pagination: {
-    data: "string";
-    limit: 0;
-    total_items: 0;
-    total_pages: 0;
+  Pagination: {
+    data: {
+      created_at: string;
+      description: string;
+      referral_code: string;
+      total_visitors: number;
+    }[];
+    limit: number;
+    total_items: number;
+    total_pages: number;
   };
 }
