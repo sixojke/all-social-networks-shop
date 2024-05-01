@@ -419,7 +419,7 @@ func (h *Handler) referralSystemCreateCode(c *gin.Context) {
 		return
 	}
 
-	h.WriteAdminLog(c, fmt.Sprintf("Создание реферальной ссылки: description - %s: referral code - %s", inp.Description, code))
+	h.WriteAdminLog(c, fmt.Sprintf("Создание реферальной ссылки: description - %v: referral code - %v", inp.Description, code))
 
 	c.JSON(http.StatusOK, linkResponse{Link: code})
 }
@@ -452,7 +452,7 @@ func (h *Handler) referralSystemDeleteCode(c *gin.Context) {
 		return
 	}
 
-	h.WriteAdminLog(c, fmt.Sprintf("Удаление реферальной ссылки: referral code: %s", referralCode))
+	h.WriteAdminLog(c, fmt.Sprintf("Удаление реферальной ссылки: referral code: %v", referralCode))
 
 	c.JSON(http.StatusOK, response{Message: "success"})
 }
