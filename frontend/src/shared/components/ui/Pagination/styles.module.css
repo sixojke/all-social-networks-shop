@@ -1,14 +1,14 @@
 .paginate {
   display: flex;
   align-items: center;
-  column-gap: 20px;
+  column-gap: 1.042vw;
   user-select: none;
   color: black;
 }
 
 .active {
-  padding: 5px 10px;
-  border-radius: 3px;
+  padding: 0.26vw 0.521vw;
+  border-radius: 0.156vw;
   color: white;
   cursor: pointer;
   background: #262626;
@@ -20,8 +20,8 @@
 }
 
 .page {
-  padding: 5px 13px;
-  border-radius: 3px;
+  padding: 0.26vw 0.677vw;
+  border-radius: 0.156vw;
   cursor: pointer;
   transition-duration: 0.3s;
 }

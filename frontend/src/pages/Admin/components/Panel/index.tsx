@@ -1,6 +1,7 @@
 import { Breadcrumbs } from "@/shared/components/ui/Breadcrumbs";
 import { AppSettingsTab } from "../Tabs/AppSettingsTab";
 import { ReferralTab } from "../Tabs/ReferralTab";
+import { AdminLogTab } from "../Tabs/AdminLogsTab";
 
 export const Panel = () => {
   return (
@@ -13,6 +14,7 @@ export const Panel = () => {
       />
       <AppSettingsTab />
       <ReferralTab />
+      <AdminLogTab />
     </div>
   );
 };
