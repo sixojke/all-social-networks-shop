@@ -4,6 +4,7 @@ import CategoriesIcon from "@/assets/adminIcons/bolcks.svg";
 import ProfileIcon from "@/assets/adminIcons/user.svg";
 import InfoIcon from "@/assets/adminIcons/info.svg";
 import ReferalIcon from "@/assets/adminIcons/referals.svg";
+import AdminLogsIcon from "@/assets/adminIcons/adminActions.svg";
 
 export const TABS = {
   appSettings: {
@@ -25,6 +26,11 @@ export const TABS = {
     value: "categories",
     label: "Категории",
     icon: CategoriesIcon,
+  },
+  adminLogs: {
+    value: "adminLogs",
+    label: "Действия админов",
+    icon: AdminLogsIcon,
   },
   profile: {
     value: "profile",

@@ -1,0 +1,17 @@
+import { protectedApi } from "@/shared/api/protected";
+import { IGetAdminLogsRequest, IGetAdminLogsResponse } from "../types";
+
+const logsApi = protectedApi.injectEndpoints({
+  endpoints: (build) => ({
+    getAdminLogs: build.query<IGetAdminLogsResponse, IGetAdminLogsRequest>({
+      query: (params) => ({
+        url: "/admin/log",
+        method: "GET",
+        params,
+      }),
+      providesTags: ["referral", "user"],
+    }),
+  }),
+});
+
+export const { useGetAdminLogsQuery } = logsApi;

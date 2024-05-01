@@ -10,7 +10,7 @@ type Props = {
 
 const Arrow: FC<{ arrow: ">" | "<" }> = ({ arrow }) => {
   return (
-    <span className="bg-main-black duration-150 rounded-[10px] py-[7px] px-[10px] text-main-white cursor-pointer hover:bg-main-dark-gray ">
+    <span className="bg-main-black duration-150 rounded-[0.521vw] py-[0.365vw] px-[0.521vw] text-main-white cursor-pointer hover:bg-main-dark-gray ">
       {arrow}
     </span>
   );
