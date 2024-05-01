@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"github.com/sixojke/internal/domain"
 )
 
@@ -411,14 +412,16 @@ func (h *Handler) referralSystemCreateCode(c *gin.Context) {
 		return
 	}
 
-	link, err := h.services.ReferralSystem.CreateCode(inp.Description)
+	code, err := h.services.ReferralSystem.CreateCode(inp.Description)
 	if err != nil {
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return
 	}
 
-	c.JSON(http.StatusOK, linkResponse{Link: link})
+	h.WriteAdminLog(c, fmt.Sprintf("Создание реферальной ссылки: description - %s: referral code - %s", inp.Description, code))
+
+	c.JSON(http.StatusOK, linkResponse{Link: code})
 }
 
 // @Summary Referral System Delete Code
@@ -449,6 +452,8 @@ func (h *Handler) referralSystemDeleteCode(c *gin.Context) {
 		return
 	}
 
+	h.WriteAdminLog(c, fmt.Sprintf("Удаление реферальной ссылки: referral code: %s", referralCode))
+
 	c.JSON(http.StatusOK, response{Message: "success"})
 }
 
@@ -477,4 +482,19 @@ func (h *Handler) adminLogs(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, paginationResponse{Pagination: logs})
+}
+
+func (h *Handler) WriteAdminLog(c *gin.Context, message string) {
+	id, err := getUserId(c)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	if err := h.services.Log.WriteAdminLog(&domain.Log{
+		UserId:  id,
+		Message: message,
+	}); err != nil {
+		log.Error(err)
+	}
 }

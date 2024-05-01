@@ -102,8 +102,8 @@ CREATE TABLE orders(
 );
 
 CREATE TABLE admin_logs(
+    user_id BIGINT NOT NULL REFERENCES users(id),
     message TEXT,
-    description VARCHAR(255),
     created_at TIMESTAMP DEFAULT now()
 );
 

@@ -3,7 +3,13 @@ package domain
 import "time"
 
 type Log struct {
-	Message     string    `json:"message" db:"message"`
-	Description string    `json:"description" db:"description"`
-	CreatedAt   time.Time `json:"created_at" db:"created_at"`
+	UserId    int       `json:"user_id" db:"user_id"`
+	Message   string    `json:"message" db:"message"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
+}
+
+type GetAdminLogsOut struct {
+	Username  string    `json:"username" db:"username"`
+	Message   string    `json:"message" db:"message"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
 }

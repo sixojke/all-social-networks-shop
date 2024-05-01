@@ -20,11 +20,11 @@ func NewLogPostgres(db *sqlx.DB) *LogPostgres {
 func (r *LogPostgres) WriteAdminLog(log *domain.Log) error {
 	query := fmt.Sprintf(`
 	INSERT INTO %s
-		(message, description)
+		(user_id, message)
 	VALUES
 		($1, $2)`, adminLogs)
 
-	if _, err := r.db.Exec(query, log.Message, log.Description); err != nil {
+	if _, err := r.db.Exec(query, log.UserId, log.Message); err != nil {
 		return fmt.Errorf("insert log: %v", err)
 	}
 
@@ -33,12 +33,13 @@ func (r *LogPostgres) WriteAdminLog(log *domain.Log) error {
 
 func (r *LogPostgres) GetAdminLogs(limit int, offset int) (*domain.Pagination, error) {
 	query := fmt.Sprintf(`
-	SELECT *
-	FROM %s
+	SELECT u.username, a.message, a.created_at
+	FROM %s a
+	INNER JOIN %s u ON a.user_id = u.id
 	ORDER BY created_at DESC
-	LIMIT $1 OFFSET $2`, adminLogs)
+	LIMIT $1 OFFSET $2`, adminLogs, users)
 
-	var logs []domain.Log
+	var logs []domain.GetAdminLogsOut
 	if err := r.db.Select(&logs, query, limit, offset); err != nil {
 		return nil, fmt.Errorf("select logs: %v", err)
 	}
