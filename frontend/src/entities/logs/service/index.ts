@@ -9,6 +9,7 @@ const logsApi = protectedApi.injectEndpoints({
         method: "GET",
         params,
       }),
+      providesTags: ["referral", "user"],
     }),
   }),
 });
