@@ -65,6 +65,30 @@ func (h *Handler) parseAuthHeader(c *gin.Context) (sub string, err error) {
 	return h.tokenManager.Parse(headerParts[1])
 }
 
+func (h *Handler) tgbotIdentity(c *gin.Context) {
+	header := c.GetHeader(authHeader)
+	if header == "" {
+		newResponse(c, http.StatusForbidden, "empty auth header")
+
+		return
+	}
+
+	headerParts := strings.Split(header, "=")
+	if len(headerParts) != 2 || headerParts[0] != "telegram" {
+		newResponse(c, http.StatusForbidden, "invalid auth header")
+
+		return
+	}
+
+	if h.config.TgBot.ApiKey != headerParts[1] {
+		newResponse(c, http.StatusForbidden, "forbidden")
+
+		return
+	}
+
+	return
+}
+
 func getUserId(c *gin.Context) (int, error) {
 	return getIdByContext(c, userIdCtx)
 }

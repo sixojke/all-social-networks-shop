@@ -42,9 +42,13 @@ service:
         refresh_token_ttl: 14400m
   referral_system:
     code_length: 32
+  telegram:
+    base_link_bot: "https://t.me/cs2sma?start="
+    code_length: 128
 
 handler:
   pagination:
     default_limit: 10
     max_limit: 100
+
   

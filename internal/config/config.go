@@ -61,7 +61,8 @@ type HTTPServer struct {
 }
 
 type Handler struct {
-	Pagination Pagination
+	Pagination Pagination `mapstructure:"pagination"`
+	TgBot      TgBot
 }
 
 type Pagination struct {
@@ -69,9 +70,19 @@ type Pagination struct {
 	MaxLimit     int `mapstructure:"max_limit"`
 }
 
+type TgBot struct {
+	ApiKey string
+}
+
 type Service struct {
 	Users          UsersService          `mapstructure:"users"`
 	ReferralSystem ReferralSystemService `mapstructure:"referral_system"`
+	Telegram       Telegram              `mapstructure:"telegram"`
+}
+
+type Telegram struct {
+	BaseLinkBot string `mapstructure:"base_link_bot"`
+	CodeLength  int    `mapstructure:"code_length"`
 }
 
 type UsersService struct {
@@ -147,6 +158,8 @@ func unmarshal(cfg *Config) error {
 	cfg.Payok.SecretKey = os.Getenv("PAYOK_KEY")
 
 	cfg.Service.Users.Auth.SigningKey = os.Getenv("SIGNING_KEY")
+
+	cfg.Handler.TgBot.ApiKey = os.Getenv("TGBOT_API_KEY")
 
 	cfg.Postgres.Username = os.Getenv("POSTGRES_USER")
 	cfg.Postgres.Password = os.Getenv("POSTGRES_PASSWORD")

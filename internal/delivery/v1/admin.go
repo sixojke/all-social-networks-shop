@@ -10,7 +10,7 @@ import (
 	"github.com/sixojke/internal/domain"
 )
 
-func (h *Handler) initAdminRouter(api *gin.RouterGroup) {
+func (h *Handler) initAdminRoutes(api *gin.RouterGroup) {
 	admin := api.Group("/admin", h.adminIdentity)
 	{
 		category := admin.Group("/category")

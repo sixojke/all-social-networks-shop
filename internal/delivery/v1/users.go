@@ -21,6 +21,22 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 	user := api.Group("/user", h.userIdentity)
 	{
 		user.GET("", h.userById)
+
+		telegram := user.Group("/telegram")
+		{
+			telegram.POST("/bind", h.userBindTelegram)
+			telegram.POST("/unbind", h.userUnbindTelegram)
+		}
+
+		supplier := user.Group("/supplier")
+		{
+			_ = supplier
+		}
+
+		buyer := user.Group("/buyer")
+		{
+			_ = buyer
+		}
 	}
 }
 
@@ -238,4 +254,63 @@ func (h *Handler) userById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, user)
+}
+
+// @Summary User Bind Telegram
+// @Security UsersAuth
+// @Tags user
+// @Description get a link for bind telegram account
+// @ModuleID userBindTelegram
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} linkResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /user/telegram/bind [post]
+func (h *Handler) userBindTelegram(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	link, err := h.services.Telegram.CreateAuthLink(userId)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, linkResponse{Link: link})
+}
+
+// @Summary User Unbind Telegram
+// @Security UsersAuth
+// @Tags user
+// @Description unbind telegram account
+// @ModuleID userUnbindTelegram
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /user/telegram/unbind [post]
+func (h *Handler) userUnbindTelegram(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	if err := h.services.Telegram.Unbind(userId); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, response{Message: "success"})
 }

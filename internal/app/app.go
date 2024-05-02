@@ -37,6 +37,10 @@ import (
 // @securityDefinitions.apikey UsersAuth
 // @in header
 // @name Authorization
+
+// @securityDefinitions.apikey TelegramAuth
+// @in header
+// @name Authorization
 func Run() {
 	cfg, err := config.InitConfig()
 	if err != nil {

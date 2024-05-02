@@ -5,8 +5,19 @@ CREATE TABLE users(
     email VARCHAR(255) UNIQUE,
     balance NUMERIC(10, 2),
     role VARCHAR(32) DEFAULT 'user',
+    telegram_id BIGINT UNIQUE,
     last_visit_at TIMESTAMP NOT NULL,
     registered_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE tg_user (
+    user_id BIGINT PRIMARY KEY,
+    telegram_id BIGINT UNIQUE NOT NULL,
+
+    CONSTRAINT fk_user 
+        FOREIGN KEY (user_id) 
+        REFERENCES users(id)
+        ON DELETE CASCADE
 );
 
 CREATE TABLE verification(
@@ -46,6 +57,11 @@ CREATE TABLE banned_users(
     user_id BIGINT UNIQUE REFERENCES users(id),
     status BOOLEAN NOT NULL,
     banned_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE bind_telegram(
+    code VARCHAR(255) NOT NULL,
+    user_id BIGINT PRIMARY KEY REFERENCES users(id)
 );
 
 CREATE TABLE reviews(

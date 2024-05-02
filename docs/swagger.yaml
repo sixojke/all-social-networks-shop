@@ -29,6 +29,16 @@ definitions:
       username:
         type: string
     type: object
+  v1.bindTelegramInp:
+    properties:
+      auth_code:
+        type: string
+      telegram_id:
+        type: integer
+    required:
+    - auth_code
+    - telegram_id
+    type: object
   v1.categoryCreateInp:
     properties:
       name:
@@ -798,6 +808,47 @@ paths:
       summary: Referral System Add Visitor
       tags:
       - referral-system
+  /telegram/bind:
+    put:
+      consumes:
+      - application/json
+      description: bind the telegram account to the account on the site, returns the
+        site user id
+      parameters:
+      - description: authorization code and telegram for registration in the system
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.bindTelegramInp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.idResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - TelegramAuth: []
+      summary: Telegram Bind
+      tags:
+      - telegram
   /user:
     get:
       consumes:
@@ -833,6 +884,72 @@ paths:
       security:
       - UsersAuth: []
       summary: User get by refresh token
+      tags:
+      - user
+  /user/telegram/bind:
+    post:
+      consumes:
+      - application/json
+      description: get a link for bind telegram account
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.linkResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: User Bind Telegram
+      tags:
+      - user
+  /user/telegram/unbind:
+    post:
+      consumes:
+      - application/json
+      description: unbind telegram account
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: User Unbind Telegram
       tags:
       - user
   /users/auth/refresh:
@@ -996,6 +1113,10 @@ paths:
       tags:
       - users-auth
 securityDefinitions:
+  TelegramAuth:
+    in: header
+    name: Authorization
+    type: apiKey
   UsersAuth:
     in: header
     name: Authorization

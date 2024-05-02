@@ -16,6 +16,12 @@ type Users interface {
 	Ban(id int, banStatus bool) error
 }
 
+type Telegram interface {
+	CreateAuthLink(code string, userId int) (string, error)
+	Bind(telegramId int, code string) (userId int, err error)
+	Unbind(userId int) error
+}
+
 type Category interface {
 	CreateCategory(cat *domain.Category) (id int, err error)
 	UpdateCategory(cat *domain.Category) error
@@ -54,6 +60,7 @@ type Deps struct {
 
 type Repository struct {
 	Users          Users
+	Telegram       Telegram
 	Category       Category
 	Products       Products
 	ReferralSystem ReferralSystem
@@ -63,6 +70,7 @@ type Repository struct {
 func NewRepository(deps *Deps) *Repository {
 	return &Repository{
 		Users:          NewUsersPostgres(deps.Postgres),
+		Telegram:       NewBindPostgres(deps.Postgres),
 		Category:       NewCategoryPostgres(deps.Postgres),
 		Products:       NewProductsPostgres(deps.Postgres),
 		ReferralSystem: NewReferralLinksPostgres(deps.Postgres),

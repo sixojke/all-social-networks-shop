@@ -17,5 +17,6 @@ const (
 	subcategory    = "subcategory"
 	bannedUsers    = "banned_users"
 	verification   = "verification"
+	bindTelegram   = "bind_telegram"
 	referralSystem = "referral_system"
 )

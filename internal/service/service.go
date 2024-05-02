@@ -36,6 +36,12 @@ type Users interface {
 	Ban(id int, banStatus bool) error
 }
 
+type Telegram interface {
+	CreateAuthLink(userId int) (string, error)
+	Bind(telegramId int, code string) (userId int, err error)
+	Unbind(userId int) error
+}
+
 type Category interface {
 	CreateCategory(category *domain.Category) (id int, err error)
 	UpdateCategory(category *domain.Category) error
@@ -79,6 +85,7 @@ type Deps struct {
 
 type Service struct {
 	Users          Users
+	Telegram       Telegram
 	Category       Category
 	Products       Products
 	ReferralSystem ReferralSystem
@@ -90,6 +97,7 @@ func NewService(deps *Deps) *Service {
 
 	return &Service{
 		Users:          NewUsersService(deps.Repo.Users, deps.Config.Users, deps.TokenManager, deps.Hasher, deps.OtpGenerator, emailService),
+		Telegram:       NewBindSerivce(deps.Repo.Telegram, deps.Config.Telegram, deps.OtpGenerator),
 		Category:       NewCategoryService(deps.Repo.Category),
 		Products:       NewProductsService(deps.Repo.Products),
 		ReferralSystem: NewReferralSystemService(deps.Repo.ReferralSystem, deps.Config.ReferralSystem, deps.OtpGenerator),
