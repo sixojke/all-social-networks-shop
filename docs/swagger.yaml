@@ -39,6 +39,16 @@ definitions:
     - auth_code
     - telegram_id
     type: object
+  v1.cartSetQuantityInp:
+    properties:
+      product_id:
+        type: integer
+      quantity:
+        type: integer
+    required:
+    - product_id
+    - quantity
+    type: object
   v1.categoryCreateInp:
     properties:
       name:
@@ -917,6 +927,46 @@ paths:
       security:
       - UsersAuth: []
       summary: User Cart
+      tags:
+      - user
+  /user/cart/product:
+    put:
+      consumes:
+      - application/json
+      description: update product quantity
+      parameters:
+      - description: product quantity
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.cartSetQuantityInp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: Update product quantity
       tags:
       - user
   /user/telegram/bind:

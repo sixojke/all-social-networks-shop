@@ -55,6 +55,7 @@ type Products interface {
 
 type Cart interface {
 	GetById(userId int) (*[]domain.CartGetByIdOut, error)
+	SetQuantity(inp *domain.CartSetQuantityInp) error
 }
 
 type Deps struct {

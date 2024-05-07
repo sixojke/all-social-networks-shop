@@ -38,3 +38,16 @@ func (r *CartPostgres) GetById(userId int) (*[]domain.CartGetByIdOut, error) {
 
 	return &cart, nil
 }
+
+func (r *CartPostgres) SetQuantity(inp *domain.CartSetQuantityInp) error {
+	query := fmt.Sprintf(`
+	UPDATE %s
+	SET quantity = $1
+	WHERE user_id = $2 AND product_id = $3`, cart)
+
+	if _, err := r.db.Exec(query, inp.Quantity, inp.UserId, inp.ProductId); err != nil {
+		return fmt.Errorf("update quantity: %v", err)
+	}
+
+	return nil
+}

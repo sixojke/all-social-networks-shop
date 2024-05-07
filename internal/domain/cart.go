@@ -8,3 +8,9 @@ type CartGetByIdOut struct {
 	SupplierUsername string  `json:"supplier_username" db:"username"`
 	ImgPath          string  `json:"img_path" db:"img_path"`
 }
+
+type CartSetQuantityInp struct {
+	UserId    int `db:"user_id"`
+	ProductId int `db:"product_id"`
+	Quantity  int `db:"quantity"`
+}

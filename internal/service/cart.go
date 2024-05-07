@@ -25,3 +25,11 @@ func (s *CartService) GetById(userId int) (*[]domain.CartGetByIdOut, error) {
 
 	return cart, nil
 }
+
+func (s *CartService) SetQuantity(inp *domain.CartSetQuantityInp) error {
+	if err := s.repo.SetQuantity(inp); err != nil {
+		return fmt.Errorf("error cart service SetQuantity: %v", err)
+	}
+
+	return nil
+}
