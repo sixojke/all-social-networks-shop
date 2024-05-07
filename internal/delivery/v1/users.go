@@ -22,6 +22,8 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 	{
 		user.GET("", h.userById)
 
+		h.initCartRoutes(user)
+
 		telegram := user.Group("/telegram")
 		{
 			telegram.POST("/bind", h.userBindTelegram)

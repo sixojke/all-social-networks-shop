@@ -53,6 +53,10 @@ type Products interface {
 	// Update(product *domain.Product) (*domain.Product, error)
 }
 
+type Cart interface {
+	GetById(userId int) (*[]domain.CartGetByIdOut, error)
+}
+
 type Deps struct {
 	Postgres *sqlx.DB
 	Redis    *redis.Client
@@ -63,6 +67,7 @@ type Repository struct {
 	Telegram       Telegram
 	Category       Category
 	Products       Products
+	Cart           Cart
 	ReferralSystem ReferralSystem
 	Log            Log
 }
@@ -73,6 +78,7 @@ func NewRepository(deps *Deps) *Repository {
 		Telegram:       NewBindPostgres(deps.Postgres),
 		Category:       NewCategoryPostgres(deps.Postgres),
 		Products:       NewProductsPostgres(deps.Postgres),
+		Cart:           NewCartPostgres(deps.Postgres),
 		ReferralSystem: NewReferralLinksPostgres(deps.Postgres),
 		Log:            NewLogPostgres(deps.Postgres),
 	}

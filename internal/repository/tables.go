@@ -4,6 +4,7 @@ const (
 	//******************
 	//****PostgreSQL****
 	//******************
+	cart           = "cart"
 	users          = "users"
 	orders         = "orders"
 	buyers         = "buyers"

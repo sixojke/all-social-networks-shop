@@ -73,6 +73,10 @@ type Products interface {
 	// Update(product *domain.Product) (*domain.Product, error)
 }
 
+type Cart interface {
+	GetById(userId int) (*[]domain.CartGetByIdOut, error)
+}
+
 type Deps struct {
 	Repo         *repository.Repository
 	Config       *config.Service
@@ -88,6 +92,7 @@ type Service struct {
 	Telegram       Telegram
 	Category       Category
 	Products       Products
+	Cart           Cart
 	ReferralSystem ReferralSystem
 	Log            Log
 }
@@ -100,6 +105,7 @@ func NewService(deps *Deps) *Service {
 		Telegram:       NewBindSerivce(deps.Repo.Telegram, deps.Config.Telegram, deps.OtpGenerator),
 		Category:       NewCategoryService(deps.Repo.Category),
 		Products:       NewProductsService(deps.Repo.Products),
+		Cart:           NewCartService(deps.Repo.Cart),
 		ReferralSystem: NewReferralSystemService(deps.Repo.ReferralSystem, deps.Config.ReferralSystem, deps.OtpGenerator),
 		Log:            NewLogService(deps.Repo.Log),
 	}
