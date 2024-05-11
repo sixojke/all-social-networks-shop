@@ -13,6 +13,7 @@ import (
 	"github.com/jmoiron/sqlx"
 	log "github.com/sirupsen/logrus"
 	"github.com/sixojke/internal/server"
+	"github.com/sixojke/pkg/2fa/authenticator"
 	"github.com/sixojke/pkg/auth"
 	"github.com/sixojke/pkg/database"
 	email "github.com/sixojke/pkg/email/smpt"
@@ -46,12 +47,15 @@ func Run() {
 	if err != nil {
 		log.Fatal(fmt.Sprintf("config error: %v", err))
 	}
+	fmt.Println(cfg.Authenticator.AppName)
 
 	payokClient := payok.NewClient(cfg.Payok.ShopId, cfg.Payok.SuccessUrl, cfg.Payok.SecretKey)
 
 	hasher := hash.NewSHA1Hasher("my-salt")
 
 	otpGenerator := otp.NewGOTPGenerator()
+
+	authenticatorManager := authenticator.NewManager(cfg.Authenticator.AppName)
 
 	emaildSender, err := email.NewSMTPSender(cfg.EmailSender.From, cfg.EmailSender.Password, cfg.EmailSender.Host, cfg.EmailSender.Port)
 	if err != nil {
@@ -83,6 +87,7 @@ func Run() {
 		Config:       &cfg.Service,
 		Hasher:       hasher,
 		OtpGenerator: otpGenerator,
+		TwoFaManager: authenticatorManager,
 		EmailSender:  emaildSender,
 		TokenManager: tokenManager,
 		PayokClient:  payokClient,

@@ -45,3 +45,15 @@ type Reviews struct {
 	BuyerId    int       `json:"buyer_id" db:"buyer_id"`
 	SupplierId int       `json:"supplier_id" db:"supplier_id"`
 }
+
+type UserChangePasswordInp struct {
+	UserId      int `db:"user_id"`
+	OldPassword string
+	NewPassword string
+}
+
+type UserCreatePasswordRecoveryInp struct {
+	UserId       int       `db:"user_id"`
+	SecretCode   string    `db:"secret_code"`
+	RecoveryTime time.Time `db:"recovery_time"`
+}

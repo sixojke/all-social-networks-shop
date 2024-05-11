@@ -11,9 +11,13 @@ type Users interface {
 	GetByCredentials(username, password string) (*domain.User, error)
 	GetByRefreshToken(refreshToken string) (*domain.Session, error)
 	Verify(userId int, code string) error
+	GetUserByUsernameOrEmail(usernameOrEmail string) (*domain.User, error)
 	SetSession(session *domain.Session) error
 	GetById(id int) (*domain.User, error)
 	Ban(id int, banStatus bool) error
+	ChangePassword(inp *domain.UserChangePasswordInp) error
+	CreatePasswordRecovery(inp *domain.UserCreatePasswordRecoveryInp) error
+	PasswordRecovery(secretCode string, newPassword string) error
 }
 
 type Telegram interface {
@@ -58,6 +62,11 @@ type Cart interface {
 	SetQuantity(inp *domain.CartSetQuantityInp) error
 }
 
+type TwoFa interface {
+	CreatePairingLink(userId int, secret_code string) error
+	GetSecretCode(userId int) (string, error)
+}
+
 type Deps struct {
 	Postgres *sqlx.DB
 	Redis    *redis.Client
@@ -71,6 +80,7 @@ type Repository struct {
 	Cart           Cart
 	ReferralSystem ReferralSystem
 	Log            Log
+	TwoFa          TwoFa
 }
 
 func NewRepository(deps *Deps) *Repository {
@@ -82,5 +92,6 @@ func NewRepository(deps *Deps) *Repository {
 		Cart:           NewCartPostgres(deps.Postgres),
 		ReferralSystem: NewReferralLinksPostgres(deps.Postgres),
 		Log:            NewLogPostgres(deps.Postgres),
+		TwoFa:          NewTwoFaPostgres(deps.Postgres),
 	}
 }

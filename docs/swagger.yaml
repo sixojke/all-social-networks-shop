@@ -107,6 +107,18 @@ definitions:
       message:
         type: string
     type: object
+  v1.securityChangePasswordInp:
+    properties:
+      new_password:
+        minLength: 8
+        type: string
+      old_password:
+        minLength: 8
+        type: string
+    required:
+    - new_password
+    - old_password
+    type: object
   v1.subcategoryCreateInp:
     properties:
       category_id:
@@ -140,6 +152,13 @@ definitions:
       refreshToken:
         type: string
     type: object
+  v1.userForgotPasswordInp:
+    properties:
+      username_or_email:
+        type: string
+    required:
+    - username_or_email
+    type: object
   v1.userManagementBan:
     properties:
       ban_status:
@@ -149,6 +168,16 @@ definitions:
     required:
     - ban_status
     - id
+    type: object
+  v1.userPasswordRecoveryInp:
+    properties:
+      new_password:
+        type: string
+      secret_code:
+        type: string
+    required:
+    - new_password
+    - secret_code
     type: object
   v1.userSignInInp:
     properties:
@@ -896,6 +925,76 @@ paths:
       summary: User get by refresh token
       tags:
       - user
+  /user/2fa/authenticator:
+    get:
+      consumes:
+      - application/json
+      description: checks the PIN code from two-step authentication
+      parameters:
+      - description: 6-digit pin code
+        in: query
+        name: pin
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: 2fa Check Pin
+      tags:
+      - user
+    post:
+      consumes:
+      - application/json
+      description: creates a link for pairing, the link contains a qr-code image
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.linkResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: 2fa Create Pairing Link
+      tags:
+      - user
   /user/cart:
     get:
       consumes:
@@ -967,6 +1066,46 @@ paths:
       security:
       - UsersAuth: []
       summary: Update product quantity
+      tags:
+      - user
+  /user/security/password:
+    put:
+      consumes:
+      - application/json
+      description: user change password
+      parameters:
+      - description: change password
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.securityChangePasswordInp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      security:
+      - UsersAuth: []
+      summary: User Change Password
       tags:
       - user
   /user/telegram/bind:
@@ -1071,6 +1210,82 @@ paths:
           schema:
             $ref: '#/definitions/v1.response'
       summary: User Refresh Tokens
+      tags:
+      - users-auth
+  /users/forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: sends an email with a recovery link if the user is found
+      parameters:
+      - description: username or email
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.userForgotPasswordInp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.idResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: User Forgot Password
+      tags:
+      - users-auth
+  /users/password-recovery:
+    post:
+      consumes:
+      - application/json
+      description: password recovery
+      parameters:
+      - description: password recovery
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/v1.userPasswordRecoveryInp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/v1.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/v1.response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.response'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/v1.response'
+      summary: User Password Recovery
       tags:
       - users-auth
   /users/sign-in:

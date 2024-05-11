@@ -10,14 +10,14 @@ services:
     ports:
       - "5436:5432"
 
-  app:
-    build: .
-    container_name: shop-app
-    restart: always
-    ports:
-      - "8009:8009"
-    depends_on:
-      - postgres_db
+  # app:
+  #   build: .
+  #   container_name: shop-app
+  #   restart: always
+  #   ports:
+  #     - "8009:8009"
+  #   depends_on:
+  #     - postgres_db
 
   nginx:
        image: nginx

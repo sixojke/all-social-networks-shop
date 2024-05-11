@@ -3,6 +3,8 @@ package domain
 import "errors"
 
 var (
+	ErrInvalidPassword         = errors.New("invalid password")
+	ErrInvalidPin              = errors.New("invalid pin")
 	ErrUserNotFound            = errors.New("user doesn't exists")
 	ErrVerificationCodeInvalid = errors.New("verification code is invalid")
 	ErrCodeIsEmpty             = errors.New("code is empty")

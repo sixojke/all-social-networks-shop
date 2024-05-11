@@ -2,6 +2,7 @@ package v1
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,8 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 		users.POST("/sign-in", h.userSignIn)
 		users.POST("/auth/refresh", h.userRefresh)
 		users.POST("/verify", h.userVerify)
+		users.POST("/forgot-password", h.userForgotPassword)
+		users.POST("/password-recovery", h.userPasswordRecovery)
 	}
 
 	user := api.Group("/user", h.userIdentity)
@@ -38,6 +41,17 @@ func (h *Handler) initUsersRoutes(api *gin.RouterGroup) {
 		buyer := user.Group("/buyer")
 		{
 			_ = buyer
+		}
+
+		twoFa := user.Group("/2fa")
+		{
+			twoFa.GET("/authenticator", h.twoFaCheckPin)
+			twoFa.POST("/authenticator", h.twoFaCreatePairingLink)
+		}
+
+		security := user.Group("/security")
+		{
+			security.PUT("/password", h.securityChangePassword)
 		}
 	}
 }
@@ -222,6 +236,86 @@ func (h *Handler) userVerify(c *gin.Context) {
 	c.JSON(http.StatusOK, response{"success"})
 }
 
+type userForgotPasswordInp struct {
+	UsernameOrEmail string `json:"username_or_email" binding:"required"`
+}
+
+// @Summary User Forgot Password
+// @Tags users-auth
+// @Description sends an email with a recovery link if the user is found
+// @ModuleID userForgotPassword
+// @Accept  json
+// @Produce  json
+// @Param input body userForgotPasswordInp true "username or email"
+// @Success 200 {object} idResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/forgot-password [post]
+func (h *Handler) userForgotPassword(c *gin.Context) {
+	var inp userForgotPasswordInp
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	userId, err := h.services.Users.ForgotPassword(inp.UsernameOrEmail)
+	if err != nil {
+		if errors.Is(err, domain.ErrUserNotFound) {
+			newResponse(c, http.StatusBadRequest, err.Error())
+
+			return
+		}
+
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, idResponse{ID: userId})
+}
+
+type userPasswordRecoveryInp struct {
+	SecretCode  string `json:"secret_code" binding:"required"`
+	NewPassword string `json:"new_password" binding:"required,min=8"`
+}
+
+// @Summary User Password Recovery
+// @Tags users-auth
+// @Description password recovery
+// @ModuleID userPasswordRecovery
+// @Accept  json
+// @Produce  json
+// @Param input body userPasswordRecoveryInp true "password recovery"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /users/password-recovery [post]
+func (h *Handler) userPasswordRecovery(c *gin.Context) {
+	var inp userPasswordRecoveryInp
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	if err := h.services.Users.PasswordRecovery(inp.SecretCode, inp.NewPassword); err != nil {
+		if errors.Is(err, domain.ErrUserNotFound) {
+			newResponse(c, http.StatusBadRequest, err.Error())
+
+			return
+		}
+
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, response{Message: "success"})
+}
+
 // @Summary User get by refresh token
 // @Security UsersAuth
 // @Tags user
@@ -309,6 +403,132 @@ func (h *Handler) userUnbindTelegram(c *gin.Context) {
 	}
 
 	if err := h.services.Telegram.Unbind(userId); err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, response{Message: "success"})
+}
+
+// @Summary 2fa Create Pairing Link
+// @Security UsersAuth
+// @Tags user
+// @Description creates a link for pairing, the link contains a qr-code image
+// @ModuleID twoFaCreatePairingLink
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} linkResponse
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /user/2fa/authenticator [post]
+func (h *Handler) twoFaCreatePairingLink(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	link, err := h.services.TwoFa.CreatePairingLink(userId)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, linkResponse{Link: link})
+}
+
+// @Summary 2fa Check Pin
+// @Security UsersAuth
+// @Tags user
+// @Description checks the PIN code from two-step authentication
+// @ModuleID twoFaCheckPin
+// @Accept  json
+// @Produce  json
+// @Param pin query string false "6-digit pin code"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /user/2fa/authenticator [get]
+func (h *Handler) twoFaCheckPin(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	pin, err := processIntParam(c.Query("pin"))
+	if err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	check, err := h.services.TwoFa.СheckTwoFactorPin(userId, pin)
+	if err != nil {
+		if errors.Is(err, domain.ErrInvalidPin) {
+			newResponse(c, http.StatusBadRequest, err.Error())
+
+			return
+		}
+
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	c.JSON(http.StatusOK, response{Message: fmt.Sprintf("%v", check)})
+}
+
+type securityChangePasswordInp struct {
+	OldPassword string `json:"old_password" binding:"required,min=8"`
+	NewPassword string `json:"new_password" binding:"required,min=8"`
+}
+
+// @Summary User Change Password
+// @Security UsersAuth
+// @Tags user
+// @Description user change password
+// @ModuleID securityChangePassword
+// @Accept  json
+// @Produce  json
+// @Param input body securityChangePasswordInp true "change password"
+// @Success 200 {object} response
+// @Failure 400,404 {object} response
+// @Failure 500 {object} response
+// @Failure default {object} response
+// @Router /user/security/password [put]
+func (h *Handler) securityChangePassword(c *gin.Context) {
+	userId, err := getUserId(c)
+	if err != nil {
+		newResponse(c, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	var inp securityChangePasswordInp
+	if err := c.BindJSON(&inp); err != nil {
+		newResponse(c, http.StatusBadRequest, err.Error())
+
+		return
+	}
+
+	if err := h.services.Users.ChangePassword(&domain.UserChangePasswordInp{
+		UserId:      userId,
+		OldPassword: inp.OldPassword,
+		NewPassword: inp.NewPassword,
+	}); err != nil {
+		if errors.Is(err, domain.ErrInvalidPassword) {
+			newResponse(c, http.StatusBadRequest, err.Error())
+
+			return
+		}
+
 		newResponse(c, http.StatusInternalServerError, err.Error())
 
 		return

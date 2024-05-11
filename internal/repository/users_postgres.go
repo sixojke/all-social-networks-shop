@@ -151,6 +151,24 @@ func (r *UsersPostgres) Verify(userId int, code string) error {
 	return nil
 }
 
+func (r *UsersPostgres) GetUserByUsernameOrEmail(usernameOrEmail string) (*domain.User, error) {
+	query := fmt.Sprintf(`
+	SELECT id, email
+	FROM %s
+	WHERE username = $1 OR email = $2`, users)
+
+	var user domain.User
+	if err := r.db.Get(&user, query, usernameOrEmail, usernameOrEmail); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, domain.ErrUserNotFound
+		}
+
+		return nil, fmt.Errorf("get user by username or email: %v", err)
+	}
+
+	return &user, nil
+}
+
 func (r *UsersPostgres) SetSession(session *domain.Session) error {
 	query := fmt.Sprintf(`
 	UPDATE %s
@@ -215,6 +233,71 @@ func (r *UsersPostgres) Ban(id int, banStatus bool) error {
 		if _, err := r.db.Exec(query, banStatus, id); err != nil {
 			return fmt.Errorf("update banned user status: %v", err)
 		}
+	}
+
+	return nil
+}
+
+func (r *UsersPostgres) ChangePassword(inp *domain.UserChangePasswordInp) error {
+	query := fmt.Sprintf(`
+	UPDATE %s
+	SET password = $1
+	WHERE id = $2 AND password = $3`, users)
+
+	result, err := r.db.Exec(query, inp.NewPassword, inp.UserId, inp.OldPassword)
+	if err != nil {
+		return fmt.Errorf("update password: %v", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("rows affected: %v", err)
+	}
+
+	if rowsAffected == 0 {
+		return domain.ErrInvalidPassword
+	}
+
+	return nil
+}
+
+func (r *UsersPostgres) CreatePasswordRecovery(inp *domain.UserCreatePasswordRecoveryInp) error {
+	query := fmt.Sprintf(`
+	INSERT INTO %s
+		(user_id, secret_code, recovery_time)
+	VALUES
+		($1, $2, $3)`, passwordRecovery)
+
+	if _, err := r.db.Exec(query, inp.UserId, inp.SecretCode, inp.RecoveryTime); err != nil {
+		return fmt.Errorf("insert password recovery: %v", err)
+	}
+
+	return nil
+}
+
+func (r *UsersPostgres) PasswordRecovery(secretCode string, newPassword string) error {
+	query := fmt.Sprintf(`
+	SELECT 
+		user_id
+	FROM %s
+	WHERE secret_code = $1 AND NOW() < recovery_time`, passwordRecovery)
+
+	var userId int
+	if err := r.db.Get(&userId, query, secretCode); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return domain.ErrUserNotFound
+		}
+
+		return fmt.Errorf("select userId: %v", err)
+	}
+
+	query = fmt.Sprintf(`
+	UPDATE %s
+	SET password = $1
+	WHERE id = $2`, users)
+
+	if _, err := r.db.Exec(query, newPassword, userId); err != nil {
+		return fmt.Errorf("update password: %v", err)
 	}
 
 	return nil

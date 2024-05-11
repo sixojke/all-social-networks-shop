@@ -4,6 +4,7 @@ import (
 	"github.com/sixojke/internal/config"
 	"github.com/sixojke/internal/domain"
 	"github.com/sixojke/internal/repository"
+	"github.com/sixojke/pkg/2fa/authenticator"
 	"github.com/sixojke/pkg/auth"
 	email "github.com/sixojke/pkg/email/smpt"
 	"github.com/sixojke/pkg/hash"
@@ -32,8 +33,11 @@ type Users interface {
 	SignIn(inp UserSignInInp) (Tokens, error)
 	RefreshTokens(refreshToken string) (Tokens, error)
 	Verify(userId int, code string) error
+	ForgotPassword(usernameOrEmail string) (userId int, err error)
+	PasswordRecovery(secretCode string, newPassword string) error
 	GetById(id int) (*domain.User, error)
 	Ban(id int, banStatus bool) error
+	ChangePassword(inp *domain.UserChangePasswordInp) error
 }
 
 type Telegram interface {
@@ -78,11 +82,17 @@ type Cart interface {
 	SetQuantity(inp *domain.CartSetQuantityInp) error
 }
 
+type TwoFa interface {
+	CreatePairingLink(userId int) (string, error)
+	СheckTwoFactorPin(userId int, pin int) (bool, error)
+}
+
 type Deps struct {
 	Repo         *repository.Repository
 	Config       *config.Service
 	Hasher       hash.PasswordHasher
 	OtpGenerator otp.Generator
+	TwoFaManager authenticator.TwoFaManager
 	EmailSender  *email.SMTPSender
 	TokenManager auth.TokenManager
 	PayokClient  payok.Service
@@ -96,6 +106,7 @@ type Service struct {
 	Cart           Cart
 	ReferralSystem ReferralSystem
 	Log            Log
+	TwoFa          TwoFa
 }
 
 func NewService(deps *Deps) *Service {
@@ -109,5 +120,6 @@ func NewService(deps *Deps) *Service {
 		Cart:           NewCartService(deps.Repo.Cart),
 		ReferralSystem: NewReferralSystemService(deps.Repo.ReferralSystem, deps.Config.ReferralSystem, deps.OtpGenerator),
 		Log:            NewLogService(deps.Repo.Log),
+		TwoFa:          NewTwoFaService(deps.Config.TwoFa, deps.Repo.TwoFa, deps.OtpGenerator, deps.TwoFaManager),
 	}
 }

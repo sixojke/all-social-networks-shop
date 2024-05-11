@@ -4,8 +4,8 @@ click_house:
   db_name: "test_db"
 
 postgres:
-  host: "postgres_db"
-  port: 5432
+  host: "localhost"
+  port: 5436
   db_name: "all_social_networks_shop"
   ssl_mode: "disable"
 
@@ -29,12 +29,18 @@ email_sender:
   host: "smtp-mail.outlook.com"
   port: 587
 
+authenticator:
+  app_name: "all social networks shop"
+
 payok:
   shop_id: 7128
   success_url: "https://t.me/cs2sma_bot"
 
 service:
   users:
+    password_recovery:
+      secret_code_length: 128
+      base_url: "localhost:3000/password-recovery?secret_code="
     auth:
       verification_code_length: 6
       jwt:
@@ -45,6 +51,8 @@ service:
   telegram:
     base_link_bot: "https://t.me/cs2sma?start="
     code_length: 128
+  authenticator:
+    secret_code_length: 128
 
 handler:
   pagination:

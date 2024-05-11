@@ -10,6 +10,12 @@ CREATE TABLE users(
     registered_at TIMESTAMP DEFAULT now()
 );
 
+CREATE TABLE two_fa(
+    is_active BOOLEAN NOT NULL,
+    secret_code VARCHAR(255),
+    user_id BIGINT UNIQUE NOT NULL REFERENCES users(id)
+);
+
 CREATE TABLE tg_user (
     user_id BIGINT PRIMARY KEY,
     telegram_id BIGINT UNIQUE NOT NULL,
@@ -25,6 +31,12 @@ CREATE TABLE verification(
     code VARCHAR(32),
 
     user_id BIGINT PRIMARY KEY REFERENCES users(id)
+);
+
+CREATE TABLE password_recovery(
+    secret_code VARCHAR(255) UNIQUE NOT NULL,
+    recovery_time TIMESTAMP NOT NULL,
+    user_id BIGINT NOT NULL REFERENCES users(id)
 );
 
 CREATE TABLE sessions(

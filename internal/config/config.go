@@ -16,14 +16,19 @@ const (
 )
 
 type Config struct {
-	Postgres    Postgres
-	Redis       Redis
-	Cache       Cache
-	HTTPServer  HTTPServer
-	Handler     Handler
-	Service     Service
-	EmailSender EmailSender
-	Payok       Payok
+	Postgres      Postgres
+	Redis         Redis
+	Cache         Cache
+	HTTPServer    HTTPServer
+	Handler       Handler
+	Service       Service
+	Authenticator Authenticator
+	EmailSender   EmailSender
+	Payok         Payok
+}
+
+type Authenticator struct {
+	AppName string `mapstructure:"app_name"`
 }
 
 type EmailSender struct {
@@ -78,6 +83,11 @@ type Service struct {
 	Users          UsersService          `mapstructure:"users"`
 	ReferralSystem ReferralSystemService `mapstructure:"referral_system"`
 	Telegram       Telegram              `mapstructure:"telegram"`
+	TwoFa          TwoFa                 `mapstructure:"authenticator"`
+}
+
+type TwoFa struct {
+	SecretCodeLength int `mapstructure:"secret_code_length"`
 }
 
 type Telegram struct {
@@ -86,8 +96,15 @@ type Telegram struct {
 }
 
 type UsersService struct {
-	Auth Auth `mapstructure:"auth"`
+	Auth             Auth             `mapstructure:"auth"`
+	PasswordRecovery PasswordRecovery `mapstructure:"password_recovery"`
 }
+
+type PasswordRecovery struct {
+	SecretCodeLength int    `mapstructure:"secret_code_length"`
+	BaseUrl          string `mapstructure:"base_url"`
+}
+
 type Auth struct {
 	JWT                    JWT `mapstructure:"jwt"`
 	VerificationCodeLength int `mapstructure:"verification_code_length"`
@@ -144,15 +161,19 @@ func unmarshal(cfg *Config) error {
 	}
 
 	if err := viper.UnmarshalKey("service", &cfg.Service); err != nil {
-		return fmt.Errorf("unmarshal http server config: %v", err)
+		return fmt.Errorf("unmarshal service config: %v", err)
 	}
 
 	if err := viper.UnmarshalKey("payok", &cfg.Payok); err != nil {
-		return fmt.Errorf("unmarshal email_sender config: %v", err)
+		return fmt.Errorf("unmarshal payok config: %v", err)
 	}
 
 	if err := viper.UnmarshalKey("handler", &cfg.Handler); err != nil {
 		return fmt.Errorf("unmarshal handler config: %v", err)
+	}
+
+	if err := viper.UnmarshalKey("authenticator", &cfg.Authenticator); err != nil {
+		return fmt.Errorf("unmarshal authenticator config: %v", err)
 	}
 
 	cfg.Payok.SecretKey = os.Getenv("PAYOK_KEY")

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"time"
@@ -98,6 +99,56 @@ func (s *UsersService) Verify(userId int, code string) error {
 	return nil
 }
 
+func (s *UsersService) ForgotPassword(usernameOrEmail string) (userId int, err error) {
+	user, err := s.repo.GetUserByUsernameOrEmail(usernameOrEmail)
+	if err != nil {
+		if errors.Is(err, domain.ErrUserNotFound) {
+			return 0, err
+		}
+
+		return 0, fmt.Errorf("error users service ForgotPassword: %v", err)
+	}
+
+	secretCode := s.otpGenerator.RandomSecretWithLength(128)
+	recoveryTime := time.Now().AddDate(0, 0, 1)
+
+	if err := s.repo.CreatePasswordRecovery(&domain.UserCreatePasswordRecoveryInp{
+		UserId:       user.Id,
+		SecretCode:   secretCode,
+		RecoveryTime: recoveryTime,
+	}); err != nil {
+		return 0, fmt.Errorf("error users service ForgotPassword: %v", err)
+	}
+
+	recoveryLink := s.config.PasswordRecovery.BaseUrl + secretCode
+
+	if err := s.email.SendUserPasswordRecoveryEmail(&PasswordRecoveryInp{
+		Email:        user.Email,
+		RecoveryLink: recoveryLink,
+	}); err != nil {
+		return 0, fmt.Errorf("error users service ForgotPassword: %v", err)
+	}
+
+	return user.Id, nil
+}
+
+func (s *UsersService) PasswordRecovery(secretCode string, newPassword string) error {
+	newPassHash, err := s.hasher.Hash(newPassword)
+	if err != nil {
+		return fmt.Errorf("error users service PasswordRecovery: %v", err)
+	}
+
+	if err := s.repo.PasswordRecovery(secretCode, newPassHash); err != nil {
+		if errors.Is(err, domain.ErrUserNotFound) {
+			return err
+		}
+
+		return fmt.Errorf("error users service PasswordRecovery: %v", err)
+	}
+
+	return nil
+}
+
 func (s *UsersService) createSession(userId int, userRole string) (Tokens, error) {
 	var (
 		tokens Tokens
@@ -139,6 +190,28 @@ func (s *UsersService) GetById(id int) (*domain.User, error) {
 func (s *UsersService) Ban(id int, banStatus bool) error {
 	if err := s.repo.Ban(id, banStatus); err != nil {
 		return fmt.Errorf("error users service Ban: %v", err)
+	}
+
+	return nil
+}
+
+func (s *UsersService) ChangePassword(inp *domain.UserChangePasswordInp) error {
+	oldPassHash, err := s.hasher.Hash(inp.OldPassword)
+	if err != nil {
+		return fmt.Errorf("error users service ChangePassword: %v", err)
+	}
+
+	newPassHash, err := s.hasher.Hash(inp.NewPassword)
+	if err != nil {
+		return fmt.Errorf("error users service ChangePassword: %v", err)
+	}
+
+	if err := s.repo.ChangePassword(&domain.UserChangePasswordInp{
+		UserId:      inp.UserId,
+		OldPassword: oldPassHash,
+		NewPassword: newPassHash,
+	}); err != nil {
+		return fmt.Errorf("error users service ChangePassword: %v", err)
 	}
 
 	return nil
